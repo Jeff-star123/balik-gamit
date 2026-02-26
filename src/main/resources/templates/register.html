@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register - BSIT Hub</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .register-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { text-align: center; color: #007bff; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .login-link { display: block; text-align: center; margin-top: 15px; font-size: 0.9em; color: #007bff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="register-card">
+        <h2>Create Student Account</h2>
+        <form th:action="@{/register}" method="post" onsubmit="return validatePasswords()">
+            <input type="text" name="studentId" placeholder="Student ID" required>
+            <input type="text" name="name" placeholder="Full Name" required>
+            
+            <input type="password" name="password" id="regPass" placeholder="Create Password" required>
+            
+            <input type="password" id="confirmPass" placeholder="Confirm Password" required>
+            
+            <p id="matchError" style="color: #dc3545; font-size: 0.8em; display: none; margin: 5px 0; text-align: left;">
+                ⚠️ Passwords do not match!
+            </p>
+
+            <div style="text-align: left; font-size: 0.85em; margin: 5px 0;">
+                <input type="checkbox" onclick="togglePassFields()" style="width: auto; margin-right: 5px;"> 
+                Show Passwords
+            </div>
+
+            <button type="submit">Register Account</button>
+        </form>
+
+        <script>
+            // Updated Toggle Function for both fields
+            function togglePassFields() {
+                var p1 = document.getElementById("regPass");
+                var p2 = document.getElementById("confirmPass");
+                var type = p1.type === "password" ? "text" : "password";
+                p1.type = type;
+                p2.type = type;
+            }
+
+            // Validation Logic
+            function validatePasswords() {
+                var pass = document.getElementById("regPass").value;
+                var confirm = document.getElementById("confirmPass").value;
+                var errorMsg = document.getElementById("matchError");
+
+                if (pass !== confirm) {
+                    errorMsg.style.display = "block"; // Show error
+                    return false; // Prevent form submission
+                }
+                return true; // Proceed with registration
+            }
+        </script>
+    </div>
+</body>
+</html>

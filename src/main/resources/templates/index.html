@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>BALIK GAMIT | Lost & Found</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        /* Keep your existing body and basic styles */
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 1000px; } /* Widened for the grid */
+        
+        /* GRID LOGIC - Crucial for the layout */
+        .item-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 20px; 
+            width: 100%;
+        }
+
+        /* CARD STYLING */
+        .item-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .image-container img { width: 100%; height: 200px; object-fit: cover; }
+        .card-content { padding: 15px; }
+        
+        .mod-badge { color: #dc3545; font-weight: bold; font-size: 0.8em; }
+        .section-title { margin-top: 40px; border-bottom: 2px solid #ddd; padding-bottom: 10px; width: 100%; }
+        .logout-btn { background-color: #6c757d; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; float: right; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/logout" class="logout-btn">Logout</a>
+        <h1 style="letter-spacing: 2px; text-transform: uppercase;">BALIK GAMIT</h1>
+
+        <div class="section-card">
+            <h3>Report a Found Item</h3>
+            <form action="/report" method="post" enctype="multipart/form-data" class="report-form">
+                <input type="text" name="itemName" placeholder="Item Name" required>
+                
+                <select name="category" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Electronics">📱 Electronics</option>
+                    <option value="ID/Documents">🪪 IDs / Documents</option>
+                    <option value="Keys">🔑 Keys</option>
+                    <option value="Wallets/Bags">💼 Wallets & Bags</option>
+                    <option value="Others">📦 Others</option>
+                </select>
+
+                <input type="text" name="description" placeholder="Description (e.g. Color, brand, where found)" class="full-width" required>
+                
+                <input type="text" name="contactInfo" placeholder="Your Contact Info" required>
+                
+                <input type="file" name="imageFile" accept="image/*">
+
+                <button type="submit" class="full-width">Post to Feed</button>
+            </form>
+        </div>
+        <div class="filter-container">
+            <button class="filter-btn active" onclick="filterByCategory('all')">All</button>
+            <button class="filter-btn" onclick="filterByCategory('Electronics')">📱 Electronics</button>
+            <button class="filter-btn" onclick="filterByCategory('ID/Documents')">🪪 IDs</button>
+            <button class="filter-btn" onclick="filterByCategory('Keys')">🔑 Keys</button>
+            <button class="filter-btn" onclick="filterByCategory('Wallets/Bags')">💼 Wallets</button>
+        </div>
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="itemSearch" onkeyup="filterItems()" placeholder="Search items...">
+        </div>
+
+        <h2 class="section-title">Active Feed</h2>
+        <div class="item-grid"> <div th:each="item : ${items}" class="item-card">
+                <div class="image-container" style="position: relative;">
+                    <span class="status-badge">Found</span>
+                    <img th:if="${item.imagePath != null}" 
+                        th:src="${item.imagePath}" 
+                        alt="Item image" 
+                        onclick="openLightbox(this)" 
+                        style="cursor: pointer;">
+                </div>
+                <div class="card-content">
+                    <div class="card-header-flex">
+                        <span class="category-tag" th:text="${item.category}">Category</span>
+                        <span class="timestamp" th:text="${item.getFormattedDate()}">2 hours ago</span>
+                    </div>
+
+                    <h3 th:text="${item.name}">Item Name</h3>
+                    <p class="description" th:text="${item.description}" style="font-style: italic; color: #666;">Description</p>
+                    <p><strong>Found by:</strong> <span th:text="${item.poster.name}">Name</span></p>
+                    
+                    <div th:if="${session.loggedInStudent != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}" style="margin-top: 10px;">
+                        <p th:if="${session.loggedInStudent.isAdmin and session.loggedInStudent.studentId != item.poster.studentId}" class="mod-badge">MODERATOR MODE</p>
+                        <div style="display: flex; gap: 5px;">
+                            <form th:action="@{'/finish/' + ${item.id}}" method="post" style="flex:1;">
+                                <button type="submit" style="background:#28a745; color:white; border:none; padding:8px; border-radius:5px; width:100%;">Finish</button>
+                            </form>
+                            <form th:action="@{'/delete/' + ${item.id}}" method="post" style="flex:1;">
+                                <button type="submit" onclick="return confirm('Delete this post?')" style="background:#dc3545; color:white; border:none; padding:8px; border-radius:5px; width:100%;">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title" style="color: #28a745;">✅ Archive</h2>
+        <div class="item-grid">
+            <div th:each="item : ${archivedItems}" class="item-card" style="border-left: 5px solid #28a745;">
+                <div class="card-content">
+                    <h3 th:text="${item.name}">Item Name</h3>
+                    <form th:action="@{'/restore/' + ${item.id}}" method="post">
+                        <button type="submit" style="background:#6c757d; color:white; border:none; padding:5px 10px; border-radius:5px;">Restore</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function filterItems() {
+        let input = document.getElementById('itemSearch').value.toLowerCase();
+        let cards = document.getElementsByClassName('item-card');
+        for (let i = 0; i < cards.length; i++) {
+            let title = cards[i].querySelector('h3').innerText.toLowerCase();
+            let desc = cards[i].querySelector('.description').innerText.toLowerCase();
+            cards[i].style.display = (title.includes(input) || desc.includes(input)) ? "" : "none";
+        }
+    }
+    function filterByCategory(category) {
+        let cards = document.getElementsByClassName('item-card');
+        for (let i = 0; i < cards.length; i++) {
+            let cardCategory = cards[i].querySelector('.category-tag').innerText;
+            if (category === 'all') {
+                cards[i].style.display = "";
+            } else if (cardCategory === category) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
+        // Update active button styling
+        let buttons = document.getElementsByClassName('filter-btn');
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].classList.remove('active');
+        }
+        event.target.classList.add('active');
+    }
+
+    let isZoomed = false;
+
+    function openLightbox(element) {
+        const modal = document.getElementById("imageModal");
+        const modalImg = document.getElementById("imgFull");
+        modal.style.display = "block";
+        modalImg.src = element.src;
+        modalImg.style.transform = "scale(1)";
+        isZoomed = false;
+        modalImg.style.cursor = "zoom-in";
+    }
+
+    function closeLightbox() {
+        document.getElementById("imageModal").style.display = "none";
+    }
+
+    // Toggle Zoom on Click
+    document.getElementById("imgFull").onclick = function() {
+        if (!isZoomed) {
+            this.style.transform = "scale(2)";
+            this.style.cursor = "zoom-out";
+            isZoomed = true;
+        } else {
+            this.style.transform = "scale(1)";
+            this.style.cursor = "zoom-in";
+            isZoomed = false;
+        }
+    };
+
+    // Close when clicking outside the image
+    document.getElementById("imageModal").onclick = function(e) {
+        if (e.target.id === "imageModal" || e.target.className === "lightbox-content-container") {
+            closeLightbox();
+        }
+    };
+    </script>
+    <div id="imageModal" class="lightbox-modal">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <div class="lightbox-content-container">
+            <img class="lightbox-content" id="imgFull">
+        </div>
+    </div>
+</body>
+</html>
