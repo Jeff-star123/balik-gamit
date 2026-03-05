@@ -7,12 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.*;
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -147,23 +144,11 @@ public class ItemController {
     }
 
     @PostMapping("/restore/{id}")
-    public String restoreItem(@PathVariable Long id, Principal principal, HttpServletRequest request) {
-        // 1. Find the item
+    public String restoreItem(@PathVariable Long id) {
         repository.findById(id).ifPresent(item -> {
-            // 2. Get the current user's name
-            String loggedInUser = principal.getName();
-            
-            // 3. Check if the user is an Admin
-            boolean isAdmin = request.isUserInRole("ROLE_ADMIN");
-
-            // 4. Security Check: Only allow if they are the owner OR an admin
-            // Note: Change 'getPosterName()' to whatever field stores the username in your Item model
-            if (item.getPosterName().equals(loggedInUser) || isAdmin) {
-                item.setReturned(false);
-                repository.save(item);
-            }
+            item.setReturned(false);
+            repository.save(item);
         });
-
         return "redirect:/";
     }
 }
