@@ -144,11 +144,22 @@ public class ItemController {
     }
 
     @PostMapping("/restore/{id}")
-    public String restoreItem(@PathVariable Long id) {
+    public String restoreItem(@PathVariable Long id, HttpSession session) {
+        // 1. Get the student currently logged in from the session
+        Student loggedIn = (Student) session.getAttribute("loggedInStudent");
+        if (loggedIn == null) return "redirect:/login"; // Guard: must be logged in
+
         repository.findById(id).ifPresent(item -> {
-            item.setReturned(false);
-            repository.save(item);
+            // 2. Get the owner of the item
+            Student owner = item.getPoster();
+
+            // 3. Check Security: Is the logged-in student the owner OR an admin?
+            if (owner.getStudentId().equals(loggedIn.getStudentId()) || loggedIn.isAdmin()) {
+                item.setReturned(false);
+                repository.save(item);
+            }
         });
+
         return "redirect:/";
     }
 }

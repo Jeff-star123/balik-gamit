@@ -77,14 +77,17 @@
                         style="cursor: pointer;">
                 </div>
                 <div class="card-content">
-                    <div class="card-header-flex">
-                        <span class="category-tag" th:text="${item.category}">Category</span>
-                        <span class="timestamp" th:text="${item.getFormattedDate()}">2 hours ago</span>
-                    </div>
+                    <div class="card-content">
+                        <h3 th:text="${item.name}">Item Name</h3>
+                        <p th:text="${item.description}">Description</p>
+                        
+                        <p style="font-size: 0.9em; color: #555;">
+                            <strong>📞 Contact: </strong> <span th:text="${item.contactInfo}">No info provided</span>
+                        </p>
 
-                    <h3 th:text="${item.name}">Item Name</h3>
-                    <p class="description" th:text="${item.description}" style="font-style: italic; color: #666;">Description</p>
-                    <p><strong>Found by:</strong> <span th:text="${item.poster.name}">Name</span></p>
+                        <p><small>Posted: <span th:text="${item.getFormattedDate()}"></span></small></p>
+                        
+                        </div>
                     
                     <div th:if="${session.loggedInStudent != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}" style="margin-top: 10px;">
                         <p th:if="${session.loggedInStudent.isAdmin and session.loggedInStudent.studentId != item.poster.studentId}" class="mod-badge">MODERATOR MODE</p>
@@ -106,19 +109,20 @@
             <div th:each="item : ${archivedItems}" class="item-card" style="border-left: 5px solid #28a745;">
                 <div class="card-content">
                     <h3 th:text="${item.name}">Item Name</h3>
-                    <form th:action="@{/items/restore/{id}(id=${item.id})}" method="post" 
-                        th:if="${#authentication.name == item.posterName or #authorization.expression('hasRole(''ADMIN'')')}">
-                        <button type="submit" class="btn-restore">Restore</button>
-
-                        <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}" 
-                            style="font-size: 0.6rem; color: #ffc107; display: block;">
-                            (Admin Override)
-                        </span>
-                    </form>
+                    
+                    <div th:if="${student.studentId == item.poster.studentId or student.admin}">
+                        <form th:action="@{/restore/{id}(id=${item.id})}" method="post">
+                            <button type="submit" class="btn-restore">Restore Item</button>
+                            
+                            <small th:if="${student.admin and student.studentId != item.poster.studentId}" 
+                                style="color: #ffc107; display: block;">
+                                (Admin Override)
+                            </small>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
     <script>
     function filterItems() {
