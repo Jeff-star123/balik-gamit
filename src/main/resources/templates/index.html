@@ -28,8 +28,11 @@
 </head>
 <body>
     <div class="container">
-        <a href="/logout" class="logout-btn">Logout</a>
-        <h1 style="letter-spacing: 2px; text-transform: uppercase;">BALIK GAMIT</h1>
+        <a th:href="@{/logout}" 
+            class="logout-btn" 
+            onclick="return confirm('Are you sure you want to log out of BALIK GAMIT?')">
+            Logout
+        </a>
 
         <div class="section-card">
             <h3>Report a Found Item</h3>

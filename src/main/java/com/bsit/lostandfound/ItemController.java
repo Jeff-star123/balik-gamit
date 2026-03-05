@@ -53,9 +53,9 @@ public class ItemController {
                     return "redirect:/";
                 })
                 .orElseGet(() -> {
-                    model.addAttribute("error", true);
+                    model.addAttribute("error", "Invalid Student ID or Password"); 
                     return "login";
-                });
+            });
     }
 
     @GetMapping("/register")

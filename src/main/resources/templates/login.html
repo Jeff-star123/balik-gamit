@@ -15,6 +15,13 @@
 <body>
     <div class="login-card">
         <h2>Student Login</h2>
+        <div th:if="${error}" 
+            style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em; text-align: center; border: 1px solid #f5c6cb;">
+            ⚠️ <span th:text="${error}">Error Message</span>
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            </form>
         <form th:action="@{/login}" method="post">
             <input type="text" name="studentId" placeholder="Student ID" required>
             
