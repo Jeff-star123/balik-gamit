@@ -29,13 +29,13 @@ public class ItemController {
 
     private final String UPLOAD_DIR = System.getProperty("user.dir") + "/src/main/resources/static/uploads/";
 
-    // --- INITIALIZATION (CREATING ADMIN) ---
+    // --- INITIALIZATION (CREATING ADMIN & TEST ACCOUNTS) ---
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
         if (studentRepository.count() == 0) {
             studentRepository.save(new Student("2023-0001", "password123", "Test Student", "test@student.edu", false));
             studentRepository.save(new Student("ADMIN-01", "admin123", "System Admin", "admin@balikgamit.com", true));
-            System.out.println("ACCOUNTS CREATED: ADMIN-01 and 2023-0001 with emails.");
+            System.out.println("ACCOUNTS CREATED: ADMIN-01 and 2023-0001.");
         }
     }
 
@@ -59,14 +59,6 @@ public class ItemController {
                     return "login";
                 });
     }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
-    }
-
-    // --- REGISTRATION WITH OTP ---
 
     @GetMapping("/register")
     public String registerPage() {
@@ -109,22 +101,44 @@ public class ItemController {
         }
     }
 
-    // --- FEED & ITEM LOGIC ---
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
+    }
+
+    // --- FEED, SEARCH & CATEGORY LOGIC ---
 
     @GetMapping("/")
-    public String showFeed(Model model, HttpSession session, @RequestParam(required = false) String category) {
+    public String showFeed(Model model, HttpSession session, 
+                           @RequestParam(required = false) String category,
+                           @RequestParam(required = false) String search) {
         Student loggedIn = (Student) session.getAttribute("loggedInStudent");
         if (loggedIn == null) return "redirect:/login";
 
-        List<LostItem> activeItems = (category != null && !category.isEmpty()) 
-            ? repository.findByIsReturnedFalseAndCategory(category) 
-            : repository.findByIsReturnedFalse();
+        List<LostItem> activeItems;
+        
+        // 1. Handle Search and Category filtering
+        if (search != null && !search.isEmpty()) {
+            activeItems = repository.findByIsReturnedFalseAndNameContainingIgnoreCase(search);
+        } else if (category != null && !category.isEmpty()) {
+            activeItems = repository.findByIsReturnedFalseAndCategory(category);
+        } else {
+            activeItems = repository.findByIsReturnedFalse();
+        }
+
+        // 2. Fetch Archived Items (This ensures they show up in the Archive section)
+        List<LostItem> archivedItems = repository.findAll().stream()
+                .filter(LostItem::isReturned)
+                .toList();
 
         model.addAttribute("items", activeItems);
-        model.addAttribute("archivedItems", repository.findAll().stream().filter(LostItem::isReturned).toList());
+        model.addAttribute("archivedItems", archivedItems);
         model.addAttribute("student", loggedIn);
         return "index";
     }
+
+    // --- ITEM ACTIONS (POST REPORT, FINISH, DELETE) ---
 
     @PostMapping("/report")
     public String reportItem(@RequestParam String itemName, @RequestParam String description, 
@@ -146,6 +160,30 @@ public class ItemController {
         return "redirect:/";
     }
 
+    @PostMapping("/finish/{id}")
+    public String finishItem(@PathVariable Long id) {
+        repository.findById(id).ifPresent(item -> {
+            item.setReturned(true);
+            repository.save(item);
+        });
+        return "redirect:/";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteItem(@PathVariable Long id) {
+        repository.deleteById(id);
+        return "redirect:/";
+    }
+
+    @PostMapping("/restore/{id}")
+    public String restoreItem(@PathVariable Long id) {
+        repository.findById(id).ifPresent(item -> {
+            item.setReturned(false);
+            repository.save(item);
+        });
+        return "redirect:/";
+    }
+
     // --- FORGOT PASSWORD 3-STEP FLOW ---
 
     @GetMapping("/forgot-password")
@@ -153,7 +191,6 @@ public class ItemController {
         return "forgot-password";
     }
 
-    // Step 1: Send OTP and redirect to clean verify page
     @PostMapping("/forgot-password/send-otp")
     public String sendResetOtp(@RequestParam String email, HttpSession session, Model model) {
         return studentRepository.findByEmail(email).map(student -> {
@@ -174,13 +211,11 @@ public class ItemController {
         });
     }
 
-    // Step 2: Show the OTP-only verification page
     @GetMapping("/forgot-password/verify-otp")
     public String showVerifyOtpPage() {
         return "verify-otp"; 
     }
 
-    // Step 2b: Handle OTP validation only
     @PostMapping("/forgot-password/confirm-otp")
     public String confirmOtp(@RequestParam String userOtp, HttpSession session, Model model) {
         String sessionOtp = (String) session.getAttribute("resetOtp");
@@ -191,29 +226,25 @@ public class ItemController {
         return "verify-otp";
     }
 
-    // Step 3: Show the Password entry page
     @GetMapping("/forgot-password/set-new-password")
     public String showSetNewPasswordPage() {
         return "verify-reset"; 
     }
 
-    // Step 3b: Save the new password to database
     @PostMapping("/forgot-password/verify")
-    public String finishPasswordReset(@RequestParam String newPassword, HttpSession session, Model model) {
+    public String finishPasswordReset(@RequestParam String newPassword, HttpSession session) {
         String studentId = (String) session.getAttribute("resetStudentId");
         if (studentId != null) {
             studentRepository.findById(studentId).ifPresent(student -> {
                 student.setPassword(newPassword);
                 studentRepository.save(student);
             });
-            session.removeAttribute("resetOtp");
-            session.removeAttribute("resetStudentId");
-            return "redirect:/login?resetSuccess"; // Redirect with success flag
+            session.invalidate(); 
+            return "redirect:/login?resetSuccess";
         }
         return "redirect:/forgot-password";
     }
 
-    // Helper: AJAX Resend for Forgot Password
     @PostMapping("/forgot-password/send-otp-resend")
     @ResponseBody
     public String resendResetOtp(HttpSession session) {
