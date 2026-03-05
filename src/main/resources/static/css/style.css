@@ -1,262 +1,251 @@
-/* 1. LAYOUT & CONTAINERS */
+/* 1. DASHBOARD LAYOUT */
+:root {
+    --sidebar-width: 260px;
+    --primary-blue: #007bff;
+    --dark-bg: #1c1e21;
+}
+
 body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f0f2f5;
     margin: 0;
+    display: flex; /* Critical for Sidebar/Content split */
+    min-height: 100vh;
+}
+
+/* Updated Sidebar Styling */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--dark-bg);
+    color: white;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    z-index: 100;
+    /* FIX: Prevents padding from increasing height beyond 100vh */
+    box-sizing: border-box; 
 }
 
-.container {
-    width: 100%;
-    max-width: 1000px; /* Widened to allow 3 cards per row comfortably */
+.sidebar h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #3e4144;
+    padding-bottom: 15px;
+    flex-shrink: 0; /* Keeps header from squishing */
 }
 
-/* 2. REPORT FORM (Fixed the stretching) */
-.section-card {
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1; /* Takes up all available middle space */
+    /* FIX: Allows the menu to scroll if there are too many items */
+    overflow-y: auto; 
+}
+
+.sidebar-nav::-webkit-scrollbar {
+    width: 5px;
+}
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: #3e4144;
+    border-radius: 10px;
+}
+
+.sidebar-nav li {
+    margin-bottom: 10px;
+}
+
+.sidebar-nav a {
+    color: #ced4da;
+    text-decoration: none;
+    padding: 12px 15px;
+    display: block;
+    border-radius: 8px;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.sidebar-nav a:hover, .sidebar-nav a.active {
+    background: var(--primary-blue);
+    color: white;
+}
+
+/* Updated Logout Button */
+.logout-btn-sidebar {
+    background: #dc3545;
+    color: white !important;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 20px; /* Pushes away from the nav list */
+    transition: background 0.3s;
+    flex-shrink: 0; /* FIX: Prevents the button from being cut off */
+}
+
+.logout-btn-sidebar:hover {
+    background: #a71d2a;
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 40px;
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* 2. SLIDING POST PANEL */
+.post-panel {
+    display: none;
     background: white;
     padding: 30px;
     border-radius: 15px;
-    width: 100%;
-    max-width: 800px; 
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 3. SEARCH & FILTERS */
+.controls-row {
+    max-width: 1000px;
     margin: 0 auto 30px auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
 
-.report-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Two balanced columns */
-    gap: 15px;
-}
-
-.full-width {
-    grid-column: span 2;
-}
-
-/* 3. INPUTS & BUTTONS (Added Smooth Hovers) */
-input, select {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-input:focus, select:focus {
-    border-color: #007bff;
-}
-
-button {
-    background-color: #007bff;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease; /* Smooth color change */
-}
-
-button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px); /* Slight lift on hover */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-/* 4. SEARCH BAR - Perfect Center Alignment */
 .search-container {
     position: relative;
     width: 100%;
-    /* Match the max-width of your .section-card exactly */
-    max-width: 800px; 
-    /* This centers the container on the page */
-    margin: 40px auto; 
-    display: block;
-    clear: both;
+    max-width: 600px;
 }
 
 #itemSearch {
-    width: 100%; /* Fills the 800px width */
-    padding: 15px 20px 15px 50px; /* Space for the icon */
-    font-size: 1rem;
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    border-radius: 25px;
     border: 2px solid #ddd;
-    border-radius: 30px;
     outline: none;
-    background: white;
-    box-sizing: border-box; /* Forces padding to stay inside the 100% width */
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-sizing: border-box;
 }
 
-#itemSearch:focus {
-    border-color: #007bff;
-    box-shadow: 0 4px 12px rgba(0,123,255,0.1);
-}
-
-/* Position the icon relative to the search-container */
 .search-icon {
     position: absolute;
-    left: 20px; 
+    left: 15px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 1.2rem;
     color: #888;
-    z-index: 5;
-    pointer-events: none;
 }
-.section-title {
-    text-align: center; /* Change from 'left' to 'center' */
-    margin: 40px auto 20px auto;
+
+.filter-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
-/* 5. ITEM GRID (Responsive) */
+
+.filter-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.filter-btn.active {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+/* 4. ITEM GRID */
 .item-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    width: 100%;
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .item-card {
     background: white;
     border-radius: 12px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease;
-    border: 1px solid #eee;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+    position: relative;
 }
 
-.item-card:hover {
-    transform: translateY(-8px); /* Professional "lift" effect */
-    box-shadow: 0 12px 20px rgba(0,0,0,0.1);
-}
+.item-card:hover { transform: translateY(-5px); }
 
 .image-container img {
     width: 100%;
-    height: 200px;
+    height: 180px;
     object-fit: cover;
 }
-h1 {
-    width: 100%;
-    max-width: 800px; /* Matches the width of your form and search bar */
-    margin: 40px auto; /* Centering magic */
-    text-align: center; /* Centers the actual text inside the 800px box */
-    font-size: 2.5rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #1c1e21;
-}
-.category-tag {
-    display: inline-block;
-    background-color: #e7f3ff; /* Light blue background */
-    color: #007bff;            /* Corporate blue text */
-    padding: 4px 10px;
-    border-radius: 20px;       /* Rounded pill shape */
-    font-size: 0.75rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-bottom: 10px;       /* Space between tag and item name */
-}
 
-/* Optional: Different colors for different categories */
-.category-tag:contains('ID') { background-color: #fff4e5; color: #ff8800; }
-.filter-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 30px;
-    flex-wrap: wrap; /* Wraps buttons on mobile screens */
-    max-width: 800px;
-}
+.card-content { padding: 15px; }
 
-.filter-btn {
-    background: white;
-    color: #555;
-    border: 1px solid #ddd;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.filter-btn:hover {
-    background-color: #f0f2f5;
-    border-color: #007bff;
-}
-
-.filter-btn.active {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-    box-shadow: 0 4px 10px rgba(0,123,255,0.2);
-}
-.card-header-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.timestamp {
-    font-size: 0.7rem;
-    color: #888;
-    font-style: italic;
-}
 .status-badge {
     position: absolute;
     top: 10px;
-    right: 10px;
-    background: rgba(40, 167, 69, 0.9); /* Green for Found */
+    left: 10px;
+    background: var(--primary-blue);
     color: white;
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 5px;
     font-size: 0.7rem;
     font-weight: bold;
-    text-transform: uppercase;
 }
-/* The Background Overlay */
+
+.category-tag {
+    font-size: 0.7rem;
+    background: #e9ecef;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    color: #495057;
+}
+
+/* Forms */
+.report-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+.full-width { grid-column: span 2; }
+input, select, textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+/* Lightbox */
 .lightbox-modal {
     display: none;
     position: fixed;
-    z-index: 2000; /* Stays above everything */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.9);
-    overflow: hidden;
+    z-index: 2000;
+    left: 0; top: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
 }
-
-/* Container to handle zooming */
-.lightbox-content-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: auto; /* Allows scrolling when zoomed in */
-}
-
-/* The Image itself */
 .lightbox-content {
-    max-width: 90%;
-    max-height: 90%;
-    transition: transform 0.25s ease;
-    cursor: zoom-in;
-}
-
-/* Close Button */
-.close-lightbox {
-    position: absolute;
-    top: 20px;
-    right: 35px;
-    color: #f1f1f1;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 2001;
+    max-width: 80%;
+    max-height: 80%;
+    margin: auto;
+    display: block;
+    margin-top: 5%;
 }
