@@ -3,28 +3,85 @@
 <head>
     <title>Login - BSIT Hub</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 350px; }
-        h2 { text-align: center; color: #007bff; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #f0f2f5; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .login-card { 
+            background: white; 
+            padding: 40px; /* Increased padding for better look */
+            border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 400px; /* Standardized width */
+            text-align: center; /* This keeps the title and button centered */
+        }
+        h2 { 
+            color: #007bff; 
+            margin-bottom: 25px; 
+            font-size: 1.8rem;
+        }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+        }
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            transition: background 0.3s;
+        }
         button:hover { background-color: #0056b3; }
-        .register-link { display: block; text-align: center; margin-top: 20px; text-decoration: none; color: #28a745; font-size: 0.9em; font-weight: bold; }
+        .register-link { 
+            display: block; 
+            text-align: center; 
+            margin-top: 20px; 
+            text-decoration: none; 
+            color: #28a745; 
+            font-size: 0.9em; 
+            font-weight: bold; 
+        }
+
+        /* The Shake Animation we added earlier */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+        }
+        .shake-error {
+            animation: shake 0.4s ease-in-out;
+            border: 2px solid #dc3545 !important;
+        }
     </style>
 </head>
 <body>
-    <div class="login-card">
+    <div class="login-card" id="loginCard">
         <h2>Student Login</h2>
-        <div th:if="${error}" 
-            style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em; text-align: center; border: 1px solid #f5c6cb;">
-            ⚠️ <span th:text="${error}">Error Message</span>
+        
+        <div th:if="${error}" id="errorTrigger">
+            <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em; border: 1px solid #f5c6cb;">
+                ⚠️ Invalid Student ID or Password
+            </div>
         </div>
 
         <form th:action="@{/login}" method="post">
-            </form>
-        <form th:action="@{/login}" method="post">
             <input type="text" name="studentId" placeholder="Student ID" required>
-            
             <input type="password" name="password" id="loginPass" placeholder="Password" required>
             
             <div style="text-align: left; font-size: 0.85em; margin: 5px 0;">
@@ -48,5 +105,14 @@
         }
     </script>
     </div>
+    <script>
+        window.onload = function() {
+            // If the error div exists, trigger the shake
+            if (document.getElementById('errorTrigger')) {
+                const card = document.getElementById('loginCard');
+                card.classList.add('shake-error');
+            }
+        };
+    </script>
 </body>
 </html>
