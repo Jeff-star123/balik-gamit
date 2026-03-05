@@ -106,8 +106,14 @@
             <div th:each="item : ${archivedItems}" class="item-card" style="border-left: 5px solid #28a745;">
                 <div class="card-content">
                     <h3 th:text="${item.name}">Item Name</h3>
-                    <form th:action="@{'/restore/' + ${item.id}}" method="post">
-                        <button type="submit" style="background:#6c757d; color:white; border:none; padding:5px 10px; border-radius:5px;">Restore</button>
+                    <form th:action="@{/items/restore/{id}(id=${item.id})}" method="post" 
+                        th:if="${#authentication.name == item.posterName or #authorization.expression('hasRole(''ADMIN'')')}">
+                        <button type="submit" class="btn-restore">Restore</button>
+
+                        <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}" 
+                            style="font-size: 0.6rem; color: #ffc107; display: block;">
+                            (Admin Override)
+                        </span>
                     </form>
                 </div>
             </div>
