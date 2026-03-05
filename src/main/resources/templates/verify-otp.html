@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Verify OTP - BALIK GAMIT</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .resend-container { display: flex; align-items: center; gap: 10px; margin-top: 10px; justify-content: center; }
+        button { padding: 10px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-verify { width: 100%; background-color: #28a745; color: white; margin-top: 10px; }
+        .btn-resend { background-color: #007bff; color: white; font-size: 0.85em; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h3>Verify OTP</h3>
+        <p style="font-size: 0.9em; color: #666;">Enter the 6-digit code sent to your email.</p>
+        
+        <div th:if="${error}" style="color: #dc3545; font-size: 0.85em; margin-bottom: 10px;" th:text="${error}"></div>
+
+        <form th:action="@{/forgot-password/confirm-otp}" method="post">
+            <input type="text" name="userOtp" placeholder="6-Digit OTP" required maxlength="6">
+            <button type="submit" class="btn-verify">Verify Code</button>
+        </form>
+
+        <div class="resend-container">
+            <button type="button" id="resendBtn" class="btn-resend" onclick="resendOtp()">Resend OTP</button>
+        </div>
+        <p id="timerText" style="font-size: 0.8em; color: #888; display: none;">
+            Available in <span id="seconds">60</span>s
+        </p>
+    </div>
+
+    <script>
+        let countdown;
+        function startTimer() {
+            const btn = document.getElementById('resendBtn');
+            const timerText = document.getElementById('timerText');
+            const sec = document.getElementById('seconds');
+            btn.disabled = true; btn.style.backgroundColor = "#ccc";
+            timerText.style.display = "block";
+            let timeLeft = 60;
+            countdown = setInterval(() => {
+                timeLeft--; sec.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    btn.disabled = false; btn.style.backgroundColor = "#007bff";
+                    timerText.style.display = "none";
+                }
+            }, 1000);
+        }
+        function resendOtp() {
+            fetch('/forgot-password/send-otp-resend', { method: 'POST' })
+                .then(res => res.ok ? (alert("New OTP Sent!"), startTimer()) : alert("Error resending"));
+        }
+        window.onload = startTimer;
+    </script>
+</body>
+</html>

@@ -80,6 +80,10 @@
             </div>
         </div>
 
+        <div th:if="${param.resetSuccess}" style="color: white; background: #28a745; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+            ✅ Password updated successfully! Please login.
+        </div>
+
         <form th:action="@{/login}" method="post">
             <input type="text" name="studentId" placeholder="Student ID" required>
             <input type="password" name="password" id="loginPass" placeholder="Password" required>
@@ -92,6 +96,9 @@
             <button type="submit">Login</button>
             <a href="/register" class="register-link">New student? Register here</a>
         </form>
+        <div style="margin-top: 15px;">
+            <a href="/forgot-password" style="text-decoration: none; color: #dc3545; font-size: 0.9em;">Forgot Password?</a>
+        </div>
     </div>
 
     <script>

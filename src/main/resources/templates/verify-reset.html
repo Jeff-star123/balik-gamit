@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Set New Password - BALIK GAMIT</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #28a745; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .match-error { color: #dc3545; font-size: 0.85em; display: none; margin-top: 5px; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Set New Password</h2>
+        <p style="font-size: 0.9em; color: #666;">Create a strong password for your account.</p>
+        
+        <form th:action="@{/forgot-password/verify}" method="post" onsubmit="return validatePasswords()">
+            <input type="password" name="newPassword" id="newPass" placeholder="New Password" required>
+            <input type="password" id="confirmPass" placeholder="Confirm New Password" required>
+            
+            <p id="matchError" class="match-error">⚠️ Passwords do not match!</p>
+
+            <div style="text-align: left; font-size: 0.85em; margin: 10px 0;">
+                <input type="checkbox" onclick="toggleVisibility()" style="width: auto; margin-right: 5px;"> 
+                Show Passwords
+            </div>
+
+            <button type="submit">Update Password</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleVisibility() {
+            const p1 = document.getElementById("newPass");
+            const p2 = document.getElementById("confirmPass");
+            const type = p1.type === "password" ? "text" : "password";
+            p1.type = type;
+            p2.type = type;
+        }
+
+        function validatePasswords() {
+            const pass = document.getElementById("newPass").value;
+            const confirm = document.getElementById("confirmPass").value;
+            const errorMsg = document.getElementById("matchError");
+
+            if (pass !== confirm) {
+                errorMsg.style.display = "block";
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

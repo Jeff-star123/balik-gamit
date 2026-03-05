@@ -9,17 +9,45 @@
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .login-link { display: block; text-align: center; margin-top: 15px; font-size: 0.9em; color: #007bff; text-decoration: none; }
+        
+        /* Styled specifically for the Send OTP button within the flex container */
+        #sendOtpBtn { 
+            width: auto !important; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer;
+            white-space: nowrap;
+            padding: 0 15px;
+            height: 45px; /* Matches input height */
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="register-card">
         <h2>Create Student Account</h2>
+        <div th:if="${error}" style="color: white; background: #dc3545; padding: 10px; border-radius: 5px; margin-bottom: 10px; text-align: center;">
+            <span th:text="${error}"></span>
+        </div>
+        
         <form th:action="@{/register}" method="post" onsubmit="return validatePasswords()">
             <input type="text" name="studentId" placeholder="Student ID" required>
             <input type="text" name="name" placeholder="Full Name" required>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="email" id="email" name="email" placeholder="Institutional Email" required>
+                <button type="button" id="sendOtpBtn" onclick="sendOtpEmail()">Send OTP</button>
+            </div>
+
+            <p id="timerText" style="font-size: 0.85em; color: #666; margin-top: 0px; margin-bottom: 10px; display: none; text-align: left;">
+                You can resend the code in <span id="seconds" style="font-weight: bold; color: #dc3545;">60</span>s
+            </p>
+
+            <input type="text" name="userOtp" id="otpInput" placeholder="Enter 6-Digit OTP" required>
             
             <input type="password" name="password" id="regPass" placeholder="Create Password" required>
-            
             <input type="password" id="confirmPass" placeholder="Confirm Password" required>
             
             <p id="matchError" style="color: #dc3545; font-size: 0.8em; display: none; margin: 5px 0; text-align: left;">
@@ -34,8 +62,70 @@
             <button type="submit">Register Account</button>
         </form>
 
+        <a href="/login" class="login-link">Already have an account? Login here</a>
+
         <script>
-            // Updated Toggle Function for both fields
+            let countdown;
+
+            // UPDATED FUNCTION WITH IMPROVED VISUALS
+            function sendOtpEmail() {
+                const email = document.getElementById('email').value;
+                const btn = document.getElementById('sendOtpBtn');
+                const timerText = document.getElementById('timerText');
+                const secondsSpan = document.getElementById('seconds');
+
+                if (!email) {
+                    alert("Please enter your email first.");
+                    return;
+                }
+
+                // 1. Disable the button and show the timer immediately
+                btn.disabled = true;
+                btn.style.backgroundColor = "#ccc"; // Grey out the button
+                btn.style.cursor = "not-allowed";
+                timerText.style.display = "block";
+                let timeLeft = 60;
+
+                // 2. Start the 60-second countdown
+                countdown = setInterval(() => {
+                    timeLeft--;
+                    secondsSpan.innerText = timeLeft;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        btn.disabled = false;
+                        btn.style.backgroundColor = "#007bff"; // Restore button color
+                        btn.style.cursor = "pointer";
+                        timerText.style.display = "none";
+                        secondsSpan.innerText = "60"; // Reset for next time
+                    }
+                }, 1000);
+
+                // 3. Send the request to ItemController.java
+                fetch('/send-otp?email=' + email, { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Verification code sent! Please check your inbox.");
+                        } else {
+                            alert("Error: Could not send OTP. Please try again.");
+                            // Reset the timer if the server call fails immediately
+                            clearInterval(countdown);
+                            btn.disabled = false;
+                            btn.style.backgroundColor = "#007bff";
+                            btn.style.cursor = "pointer";
+                            timerText.style.display = "none";
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        clearInterval(countdown);
+                        btn.disabled = false;
+                        btn.style.backgroundColor = "#007bff";
+                        btn.style.cursor = "pointer";
+                        timerText.style.display = "none";
+                    });
+            }
+
             function togglePassFields() {
                 var p1 = document.getElementById("regPass");
                 var p2 = document.getElementById("confirmPass");
@@ -44,17 +134,16 @@
                 p2.type = type;
             }
 
-            // Validation Logic
             function validatePasswords() {
                 var pass = document.getElementById("regPass").value;
                 var confirm = document.getElementById("confirmPass").value;
                 var errorMsg = document.getElementById("matchError");
 
                 if (pass !== confirm) {
-                    errorMsg.style.display = "block"; // Show error
-                    return false; // Prevent form submission
+                    errorMsg.style.display = "block";
+                    return false;
                 }
-                return true; // Proceed with registration
+                return true;
             }
         </script>
     </div>
