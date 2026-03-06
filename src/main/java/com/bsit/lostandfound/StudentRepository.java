@@ -7,6 +7,5 @@ public interface StudentRepository extends CrudRepository<Student, String> {
     
     // Spring Boot will automatically create the SQL for this 
     // as long as your Student class has a variable named 'email'
-    // In StudentRepository.java
-    Optional<Student> findFirstByEmail(String email);
+    Optional<Student> findByEmail(String email);
 }
