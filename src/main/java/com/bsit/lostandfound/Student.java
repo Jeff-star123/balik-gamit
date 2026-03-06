@@ -35,7 +35,7 @@ public class Student {
     public String getEmail() { return email; }
     
     // Use this specific naming for booleans
-    public boolean isAdmin() { return isAdmin; }
+    public boolean isIsAdmin() { return isAdmin; }
     
     // Add these setters just in case your login logic needs them
     public void setStudentId(String studentId) { this.studentId = studentId; }

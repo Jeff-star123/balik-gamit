@@ -1,63 +1,141 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Login - BSIT Hub</title>
+    <title>BALIK GAMIT | Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        /* --- FIGMA DESIGN SYSTEM --- */
+        :root {
+            --glass-heavy: rgba(255, 255, 255, 0.95);
+            --text-main: #2d3436;
+            --primary-accent: #23a6d5;
+        }
+
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background-color: #f0f2f5; 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             display: flex; 
             justify-content: center; 
             align-items: center; 
             height: 100vh; 
             margin: 0; 
-        }
-        .login-card { 
-            background: white; 
-            padding: 40px; /* Increased padding for better look */
-            border-radius: 12px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-            width: 100%; 
-            max-width: 400px; /* Standardized width */
-            text-align: center; /* This keeps the title and button centered */
-        }
-        h2 { 
-            color: #007bff; 
-            margin-bottom: 25px; 
-            font-size: 1.8rem;
-        }
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            margin: 10px 0; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            box-sizing: border-box; 
-        }
-        button { 
-            width: 100%; 
-            padding: 12px; 
-            background-color: #007bff; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-top: 20px; 
-            transition: background 0.3s;
-        }
-        button:hover { background-color: #0056b3; }
-        .register-link { 
-            display: block; 
-            text-align: center; 
-            margin-top: 20px; 
-            text-decoration: none; 
-            color: #28a745; 
-            font-size: 0.9em; 
-            font-weight: bold; 
+            color: var(--text-main);
         }
 
-        /* The Shake Animation we added earlier */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .login-card { 
+            background: var(--glass-heavy); 
+            backdrop-filter: blur(20px);
+            padding: 45px; 
+            border-radius: 30px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); 
+            width: 100%; 
+            max-width: 420px; 
+            text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        h2 { 
+            color: #1e272e; 
+            margin-bottom: 10px; 
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- FORMS & INPUTS --- */
+        input { 
+            width: 100%; 
+            padding: 14px 18px; 
+            margin: 10px 0; 
+            border: 2px solid #f1f2f6; 
+            border-radius: 15px; 
+            background: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1e272e !important;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus { 
+            border-color: var(--primary-accent);
+            outline: none;
+            box-shadow: 0 0 10px rgba(35, 166, 213, 0.1);
+        }
+
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            background: linear-gradient(to right, #23a6d5, #23d5ab);
+            color: white; 
+            border: none; 
+            border-radius: 15px; 
+            font-weight: 700; 
+            font-size: 1rem;
+            cursor: pointer; 
+            margin-top: 20px; 
+            transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 15px rgba(35, 166, 213, 0.3);
+        }
+
+        button:hover { 
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 6px 20px rgba(35, 166, 213, 0.4);
+        }
+
+        /* --- LINKS --- */
+        .register-link { 
+            display: block; 
+            margin-top: 25px; 
+            text-decoration: none; 
+            color: #e73c7e; 
+            font-size: 0.95rem; 
+            font-weight: 700; 
+            transition: 0.3s;
+        }
+
+        .register-link:hover { opacity: 0.8; }
+
+        .forgot-link {
+            text-decoration: none; 
+            color: #636e72; 
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+        
+        .forgot-link:hover { color: #dc3545; }
+
+        /* --- MESSAGES --- */
+        .alert {
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .alert-error { background-color: #ff7675; color: white; border: none; }
+        .alert-success { background-color: #55efc4; color: #00b894; border: none; }
+
+        /* --- ORIGINAL SHAKE ANIMATION --- */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-10px); }
@@ -66,38 +144,42 @@
         }
         .shake-error {
             animation: shake 0.4s ease-in-out;
-            border: 2px solid #dc3545 !important;
+            border: 2px solid #ff7675 !important;
         }
     </style>
 </head>
 <body>
     <div class="login-card" id="loginCard">
-        <h2>Student Login</h2>
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Enter your student credentials to continue.</p>
         
         <div th:if="${error}" id="errorTrigger">
-            <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em; border: 1px solid #f5c6cb;">
-                ⚠️ Invalid Student ID or Password
+            <div class="alert alert-error">
+                <i class="fa-solid fa-triangle-exclamation"></i> Invalid Student ID or Password
             </div>
         </div>
 
-        <div th:if="${param.resetSuccess}" style="color: white; background: #28a745; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-            ✅ Password updated successfully! Please login.
+        <div th:if="${param.resetSuccess}" class="alert alert-success">
+            <i class="fa-solid fa-circle-check"></i> Password updated! Please login.
         </div>
 
         <form th:action="@{/login}" method="post">
             <input type="text" name="studentId" placeholder="Student ID" required>
             <input type="password" name="password" id="loginPass" placeholder="Password" required>
             
-            <div style="text-align: left; font-size: 0.85em; margin: 5px 0;">
-                <input type="checkbox" onclick="togglePass('loginPass')" style="width: auto; margin-right: 5px;"> 
-                Show Password
+            <div style="text-align: left; font-size: 0.85rem; margin: 10px 0; color: #636e72;">
+                <label style="cursor: pointer; display: flex; align-items: center;">
+                    <input type="checkbox" onclick="togglePass('loginPass')" style="width: auto; margin: 0 8px 0 0;"> 
+                    Show Password
+                </label>
             </div>
 
-            <button type="submit">Login</button>
-            <a href="/register" class="register-link">New student? Register here</a>
+            <button type="submit">Login to Dashboard</button>
+            <a href="/register" class="register-link">New student? Create Account</a>
         </form>
-        <div style="margin-top: 15px;">
-            <a href="/forgot-password" style="text-decoration: none; color: #dc3545; font-size: 0.9em;">Forgot Password?</a>
+
+        <div style="margin-top: 20px;">
+            <a href="/forgot-password" class="forgot-link">Forgot Password?</a>
         </div>
     </div>
 
@@ -110,11 +192,9 @@
                 x.type = "password";
             }
         }
-    </script>
-    </div>
-    <script>
+
         window.onload = function() {
-            // If the error div exists, trigger the shake
+            // If the error div exists, trigger the shake (Original Logic)
             if (document.getElementById('errorTrigger')) {
                 const card = document.getElementById('loginCard');
                 card.classList.add('shake-error');

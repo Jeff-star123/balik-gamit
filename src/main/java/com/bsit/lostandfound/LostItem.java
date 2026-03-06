@@ -15,9 +15,9 @@ public class LostItem {
     private String imagePath;
     private String contactInfo;
     private String category;
+    private String status; // NEW: Stores "LOST" or "FOUND"
     private boolean isReturned = false;
     
-    // Only one createdAt variable is needed
     private LocalDateTime createdAt = LocalDateTime.now(); 
 
     @ManyToOne
@@ -26,6 +26,7 @@ public class LostItem {
 
     public LostItem() {}
 
+    // Updated Constructor to include status
     public LostItem(String name, String description, String imagePath, String contactInfo, String category, Student poster) {
         this.name = name;
         this.description = description;
@@ -37,22 +38,18 @@ public class LostItem {
         this.createdAt = LocalDateTime.now(); 
     }
 
-    // This is the "Time Ago" logic for your BALIK GAMIT feed
+    // Time Ago logic
     public String getFormattedDate() {
         if (this.createdAt == null) return "Just now";
-        
         Duration duration = Duration.between(this.createdAt, LocalDateTime.now());
         long minutes = duration.toMinutes();
-        long hours = duration.toHours();
-        long days = duration.toDays();
-        
         if (minutes < 1) return "Just now";
         if (minutes < 60) return minutes + "m ago";
-        if (hours < 24) return hours + "h ago";
-        return days + "d ago";
+        if (duration.toHours() < 24) return duration.toHours() + "h ago";
+        return duration.toDays() + "d ago";
     }
 
-    // Getters and Setters
+    // --- Getters and Setters ---
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getDescription() { return description; }
@@ -63,4 +60,8 @@ public class LostItem {
     public String getCategory() { return category; }
     public Student getPoster() { return poster; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+
+    // NEW Getters and Setters for Status
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

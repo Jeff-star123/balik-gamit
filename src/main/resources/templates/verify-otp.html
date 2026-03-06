@@ -1,35 +1,171 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Verify OTP - BALIK GAMIT</title>
+    <title>BALIK GAMIT | Verify OTP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 350px; text-align: center; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .resend-container { display: flex; align-items: center; gap: 10px; margin-top: 10px; justify-content: center; }
-        button { padding: 10px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-verify { width: 100%; background-color: #28a745; color: white; margin-top: 10px; }
-        .btn-resend { background-color: #007bff; color: white; font-size: 0.85em; }
+        /* --- FIGMA DESIGN SYSTEM --- */
+        :root {
+            --glass-heavy: rgba(255, 255, 255, 0.95);
+            --text-main: #2d3436;
+            --primary-accent: #23a6d5;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            color: var(--text-main);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card { 
+            background: var(--glass-heavy); 
+            backdrop-filter: blur(20px);
+            padding: 40px; 
+            border-radius: 30px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); 
+            width: 100%; 
+            max-width: 380px; 
+            text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h3 { 
+            color: #1e272e; 
+            margin-bottom: 10px; 
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        /* --- INPUTS --- */
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 10px 0; 
+            border: 2px solid #f1f2f6; 
+            border-radius: 15px; 
+            background: #fff;
+            font-family: inherit;
+            font-size: 1.2rem; /* Larger font for OTP entry */
+            letter-spacing: 5px; /* Spaced out for numbers */
+            text-align: center;
+            color: #1e272e !important;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus { 
+            border-color: var(--primary-accent);
+            outline: none;
+            box-shadow: 0 0 10px rgba(35, 166, 213, 0.1);
+        }
+
+        /* --- BUTTONS --- */
+        button { 
+            padding: 15px 25px; 
+            border-radius: 15px; 
+            border: none; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-family: 'Poppins', sans-serif;
+            transition: 0.3s;
+        }
+
+        .btn-verify { 
+            width: 100%; 
+            background: linear-gradient(to right, #23a6d5, #23d5ab);
+            color: white; 
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(35, 166, 213, 0.3);
+        }
+
+        .btn-resend { 
+            background-color: #f1f2f6; 
+            color: #1e272e; 
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        button:hover:not(:disabled) { 
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        button:disabled {
+            background-color: #dfe6e9 !important;
+            color: #b2bec3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* --- LAYOUT --- */
+        .resend-container { 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            gap: 5px; 
+            margin-top: 20px; 
+        }
+
+        #timerText { 
+            font-size: 0.8rem; 
+            color: #e73c7e; 
+            font-weight: 600;
+        }
+
+        .error-msg {
+            background-color: #ff7675;
+            color: white;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="card">
-        <h3>Verify OTP</h3>
-        <p style="font-size: 0.9em; color: #666;">Enter the 6-digit code sent to your email.</p>
+        <h3>Verify Identity</h3>
+        <p class="subtitle">Enter the 6-digit code sent to your email.</p>
         
-        <div th:if="${error}" style="color: #dc3545; font-size: 0.85em; margin-bottom: 10px;" th:text="${error}"></div>
+        <div th:if="${error}" class="error-msg">
+            <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${error}"></span>
+        </div>
 
         <form th:action="@{/forgot-password/confirm-otp}" method="post">
-            <input type="text" name="userOtp" placeholder="6-Digit OTP" required maxlength="6">
+            <input type="text" name="userOtp" placeholder="000000" required maxlength="6">
             <button type="submit" class="btn-verify">Verify Code</button>
         </form>
 
         <div class="resend-container">
-            <button type="button" id="resendBtn" class="btn-resend" onclick="resendOtp()">Resend OTP</button>
+            <p id="timerText" style="display: none;">
+                Resend available in <span id="seconds">60</span>s
+            </p>
+            <button type="button" id="resendBtn" class="btn-resend" onclick="resendOtp()">
+                <i class="fa-solid fa-rotate-right"></i> Resend OTP
+            </button>
         </div>
-        <p id="timerText" style="font-size: 0.8em; color: #888; display: none;">
-            Available in <span id="seconds">60</span>s
-        </p>
     </div>
 
     <script>
@@ -38,22 +174,35 @@
             const btn = document.getElementById('resendBtn');
             const timerText = document.getElementById('timerText');
             const sec = document.getElementById('seconds');
-            btn.disabled = true; btn.style.backgroundColor = "#ccc";
+            
+            btn.disabled = true; 
             timerText.style.display = "block";
             let timeLeft = 60;
+            
             countdown = setInterval(() => {
-                timeLeft--; sec.innerText = timeLeft;
+                timeLeft--; 
+                sec.innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
-                    btn.disabled = false; btn.style.backgroundColor = "#007bff";
+                    btn.disabled = false; 
                     timerText.style.display = "none";
                 }
             }, 1000);
         }
+
         function resendOtp() {
             fetch('/forgot-password/send-otp-resend', { method: 'POST' })
-                .then(res => res.ok ? (alert("New OTP Sent!"), startTimer()) : alert("Error resending"));
+                .then(res => {
+                    if(res.ok) {
+                        alert("New OTP Sent! Please check your email.");
+                        startTimer();
+                    } else {
+                        alert("Error resending OTP. Please try again.");
+                    }
+                });
         }
+        
+        // Auto-start timer on page load as per original logic
         window.onload = startTimer;
     </script>
 </body>

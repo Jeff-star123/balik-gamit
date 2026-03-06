@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>BALIK GAMIT | Settings</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- FIGMA & DARK MODE THEMING --- */
+        :root {
+            --glass: rgba(255, 255, 255, 0.15);
+            --glass-heavy: rgba(255, 255, 255, 0.95);
+            --sidebar-width: 280px;
+            --text-main: #2d3436;
+            --card-bg: white;
+            --input-bg: #fff;
+        }
+
+        [data-theme="dark"] {
+            --glass: rgba(0, 0, 0, 0.3);
+            --glass-heavy: rgba(30, 30, 30, 0.95);
+            --text-main: #f5f6fa;
+            --card-bg: #2d3436;
+            --input-bg: #3d4446;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            color: var(--text-main);
+            transition: color 0.3s ease;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            height: 100vh;
+            position: fixed;
+            padding: 40px 20px;
+            color: white;
+            z-index: 100;
+        }
+
+        .sidebar h2 { font-weight: 800; text-align: center; margin-bottom: 40px; }
+        .sidebar-nav { list-style: none; padding: 0; }
+        .sidebar-nav li a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+        .sidebar-nav li a:hover, .sidebar-nav li a.active { background: rgba(255,255,255,0.2); transform: translateX(5px); }
+
+        /* --- SETTINGS CARDS --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .settings-container { width: 100%; max-width: 700px; }
+        .section-title { color: white; font-size: 2rem; font-weight: 800; margin-bottom: 30px; }
+
+        .settings-card {
+            background: var(--glass-heavy);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .settings-card h3 { margin-top: 0; font-size: 1.3rem; color: #1e272e; font-weight: 800; }
+        [data-theme="dark"] .settings-card h3 { color: #f5f6fa !important; }
+        .danger-zone { border: 2px solid #ff7675; }
+
+        /* --- INPUTS & BUTTONS --- */
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: #1e272e !important;
+            font-family: inherit;
+        }
+
+        [data-theme="dark"] input { color: #f5f6fa !important; }
+
+        .btn-verify, .btn-save, .btn-delete-final {
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-verify { background: #3498db; color: white; }
+        .btn-save { background: #27ae60; color: white; }
+        .btn-delete-final { background: #d63031; color: white; }
+        .btn-verify:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* --- TOGGLES & SPINNER --- */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--glass);
+            padding: 15px 25px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #23d5ab; }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        .spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; margin-right: 10px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .step-2 { display: none; margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 15px; }
+
+        /* --- FIGMA CENTRAL NOTIFICATION STYLES --- */
+        #central-notif-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .figma-modal {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.2);
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        [data-theme="dark"] .figma-modal { background: #2d3436; color: white; }
+
+        .figma-modal.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-icon-container {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #23d5ab, #23a6d5);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 20px;
+            box-shadow: 0 15px 30px rgba(35, 213, 171, 0.3);
+        }
+
+        .modal-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e272e;
+        }
+
+        [data-theme="dark"] .modal-content h3 { color: #f5f6fa; }
+
+        .modal-content p {
+            margin: 0 0 25px 0;
+            color: #636e72;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        [data-theme="dark"] .modal-content p { color: #b2bec3; }
+
+        .modal-btn {
+            width: 100%;
+            padding: 15px;
+            background: #1e272e;
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        [data-theme="dark"] .modal-btn { background: #f5f6fa; color: #1e272e; }
+        .modal-btn:hover { filter: brightness(1.2); }
+    </style>
+</head>
+<body>
+
+    <div id="central-notif-overlay">
+        <div id="central-modal" class="figma-modal">
+            <div class="modal-icon-container">
+                <i class="fa-solid fa-shield-check"></i>
+            </div>
+            <div class="modal-content">
+                <h3 id="notif-title">Verified</h3>
+                <p id="notif-message">A secure code has been sent to your email.</p>
+            </div>
+            <button class="modal-btn" onclick="closeCentralNotif()">Proceed</button>
+        </div>
+    </div>
+
+    <nav class="sidebar">
+        <h2>BALIK GAMIT</h2>
+        <ul class="sidebar-nav">
+            <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li><a th:href="@{/profile}"><i class="fa-solid fa-user"></i> Profile</a></li>
+            <li><a th:href="@{/settings}" class="active"><i class="fa-solid fa-gear"></i> Settings</a></li>
+        </ul>
+        <div style="margin-top: auto;">
+            <a th:href="@{/logout}" class="nav-link" style="color: #ff7675;" onclick="return confirm('Log out?')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="settings-container">
+            <h2 class="section-title">Account Settings</h2>
+
+            <div class="toggle-container">
+                <span style="font-weight: 600;"><i class="fa-solid fa-moon"></i> Dark Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div th:if="${param.success}" class="status-msg" style="background: #27ae60; color: white; padding:15px; border-radius:15px; margin-bottom:20px;">Changes updated successfully!</div>
+            <div th:if="${error}" class="status-msg error" th:text="${error}" style="background: #ff7675; color: white; padding:15px; border-radius:15px; margin-bottom:20px;"></div>
+
+            <div class="settings-card">
+                <h3>Change Password</h3>
+                <div id="pw-step-1">
+                    <input type="email" id="pw-email-check" placeholder="Enter current email" required>
+                    <input type="password" id="pw-pass-check" placeholder="Enter current password" required>
+                    <button class="btn-verify" id="pw-btn" onclick="requestSecureOtp('CHANGE_PASSWORD', 'pw-email-check', 'pw-pass-check', 'pw-btn', 'pw-step-1', 'pw-step-2')">
+                        <span class="spinner"></span> Verify & Send OTP
+                    </button>
+                </div>
+                
+                <form th:action="@{/settings/verify-and-update}" method="post" id="pw-step-2" class="step-2">
+                    <input type="text" name="userOtp" placeholder="Enter 6-Digit OTP" required maxlength="6">
+                    <input type="password" name="newDetail" id="newPass" placeholder="New Password" required>
+                    <input type="password" placeholder="Confirm New Password" required oninput="checkMatch(this, 'newPass')">
+                    <button type="submit" class="btn-save">Update Password</button>
+                </form>
+            </div>
+
+            <div class="settings-card">
+                <h3>Change Email Address</h3>
+                <div id="email-step-1">
+                    <input type="email" id="em-email-check" placeholder="Enter current email" required>
+                    <input type="password" id="em-pass-check" placeholder="Enter current password" required>
+                    <button class="btn-verify" id="em-btn" onclick="requestSecureOtp('CHANGE_EMAIL', 'em-email-check', 'em-pass-check', 'em-btn', 'email-step-1', 'email-step-2')">
+                        <span class="spinner"></span> Verify & Send OTP
+                    </button>
+                </div>
+                
+                <form th:action="@{/settings/verify-and-update}" method="post" id="email-step-2" class="step-2">
+                    <input type="text" name="userOtp" placeholder="Enter 6-Digit OTP" required maxlength="6">
+                    <input type="email" name="newDetail" placeholder="New Email Address" required>
+                    <button type="submit" class="btn-save">Update Email</button>
+                </form>
+            </div>
+
+            <div class="settings-card danger-zone">
+                <h3 style="color: #d63031;">⚠️ Delete Account</h3>
+                <div id="del-step-1">
+                    <input type="email" id="del-email-check" placeholder="Registered Email Address" required>
+                    <input type="password" id="del-pw-check" placeholder="Current Password" required>
+                    <button class="btn-verify" id="del-btn" style="background:#d63031" onclick="requestSecureOtp('DELETE_ACCOUNT', 'del-email-check', 'del-pw-check', 'del-btn', 'del-step-1', 'del-step-3')">
+                        <span class="spinner"></span> Request Deletion OTP
+                    </button>
+                </div>
+                
+                <form th:action="@{/settings/verify-and-update}" method="post" id="del-step-3" class="step-2" onsubmit="return confirmFinalDelete()">
+                    <input type="text" name="userOtp" placeholder="6-Digit OTP" required maxlength="6">
+                    <button type="submit" class="btn-delete-final">Permanently Delete Account</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- CENTRAL NOTIFICATION LOGIC ---
+        function showCentralNotif(title, message, iconClass = 'fa-paper-plane') {
+            const overlay = document.getElementById('central-notif-overlay');
+            const modal = document.getElementById('central-modal');
+            const icon = modal.querySelector('.modal-icon-container i');
+            
+            document.getElementById('notif-title').innerText = title;
+            document.getElementById('notif-message').innerText = message;
+            icon.className = `fa-solid ${iconClass}`;
+
+            overlay.style.display = 'flex';
+            setTimeout(() => { modal.classList.add('active'); }, 10);
+        }
+
+        function closeCentralNotif() {
+            const modal = document.getElementById('central-modal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('central-notif-overlay').style.display = 'none';
+            }, 400);
+        }
+
+        // --- DARK MODE LOGIC ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            if (currentTheme === 'dark') themeToggle.checked = true;
+        }
+        themeToggle.addEventListener('change', function() {
+            const theme = this.checked ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+
+        // --- UNIFIED SECURE OTP LOGIC (Updated with Figma Modal) ---
+        function requestSecureOtp(action, emailId, passId, btnId, currentStepId, nextStepId) {
+            const emailVal = document.getElementById(emailId).value;
+            const passVal = document.getElementById(passId).value;
+            const btn = document.getElementById(btnId);
+            const spinner = btn.querySelector('.spinner');
+
+            if (!emailVal || !passVal) {
+                showCentralNotif('Empty Fields', 'Please fill in both email and password to verify your identity.', 'fa-circle-exclamation');
+                return;
+            }
+
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            const params = new URLSearchParams();
+            params.append('action', action);
+            params.append('emailCheck', emailVal);
+            params.append('verifyValue', passVal);
+
+            fetch('/settings/request-otp', { method: 'POST', body: params })
+            .then(res => res.text())
+            .then(data => {
+                spinner.style.display = 'none';
+                if (data.includes("Sent")) {
+                    showCentralNotif('Code Sent!', data, 'fa-envelope-circle-check');
+                    document.getElementById(currentStepId).style.display = 'none';
+                    document.getElementById(nextStepId).style.display = 'block';
+                } else {
+                    showCentralNotif('Verification Failed', data, 'fa-triangle-exclamation');
+                    btn.disabled = false;
+                }
+            })
+            .catch(() => {
+                showCentralNotif('Network Error', 'Could not connect to the server.', 'fa-wifi-slash');
+                btn.disabled = false;
+                spinner.style.display = 'none';
+            });
+        }
+
+        function checkMatch(input, targetId) {
+            const original = document.getElementById(targetId).value;
+            input.style.borderColor = (input.value !== original) ? '#ff7675' : '#27ae60';
+        }
+
+        function confirmFinalDelete() {
+            return confirm("WARNING: This action is permanent! Are you sure?");
+        }
+    </script>
+</body>
+</html>

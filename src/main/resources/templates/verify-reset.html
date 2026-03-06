@@ -1,30 +1,147 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Set New Password - BALIK GAMIT</title>
+    <title>BALIK GAMIT | Set New Password</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h2 { color: #28a745; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .match-error { color: #dc3545; font-size: 0.85em; display: none; margin-top: 5px; text-align: left; }
+        /* --- FIGMA DESIGN SYSTEM --- */
+        :root {
+            --glass-heavy: rgba(255, 255, 255, 0.95);
+            --text-main: #2d3436;
+            --success-accent: #27ae60;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            color: var(--text-main);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card { 
+            background: var(--glass-heavy); 
+            backdrop-filter: blur(20px);
+            padding: 45px; 
+            border-radius: 30px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); 
+            width: 100%; 
+            max-width: 420px; 
+            text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h2 { 
+            color: var(--success-accent); 
+            margin-bottom: 10px; 
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- INPUTS --- */
+        input[type="password"], 
+        input[type="text"] { 
+            width: 100%; 
+            padding: 14px 18px; 
+            margin: 10px 0; 
+            border: 2px solid #f1f2f6; 
+            border-radius: 15px; 
+            background: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1e272e !important;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus { 
+            border-color: var(--success-accent);
+            outline: none;
+            box-shadow: 0 0 10px rgba(39, 174, 96, 0.1);
+        }
+
+        /* --- BUTTON --- */
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+            color: white; 
+            border: none; 
+            border-radius: 15px; 
+            font-weight: 700; 
+            font-size: 1rem;
+            cursor: pointer; 
+            margin-top: 15px; 
+            transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        button:hover { 
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        }
+
+        /* --- ERROR MESSAGE --- */
+        .match-error { 
+            color: #ff7675; 
+            font-size: 0.85rem; 
+            display: none; 
+            margin: 5px 0 10px 0; 
+            text-align: left; 
+            font-weight: 600;
+        }
+
+        .checkbox-container {
+            text-align: left; 
+            font-size: 0.85rem; 
+            margin: 15px 0; 
+            color: #636e72;
+        }
+
+        label { cursor: pointer; display: flex; align-items: center; }
+        input[type="checkbox"] { width: auto; margin: 0 8px 0 0; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>Set New Password</h2>
-        <p style="font-size: 0.9em; color: #666;">Create a strong password for your account.</p>
+        <h2>Secure Account</h2>
+        <p class="subtitle">Create a strong password for your account.</p>
         
         <form th:action="@{/forgot-password/verify}" method="post" onsubmit="return validatePasswords()">
             <input type="password" name="newPassword" id="newPass" placeholder="New Password" required>
             <input type="password" id="confirmPass" placeholder="Confirm New Password" required>
             
-            <p id="matchError" class="match-error">⚠️ Passwords do not match!</p>
+            <p id="matchError" class="match-error">
+                <i class="fa-solid fa-circle-exclamation"></i> Passwords do not match!
+            </p>
 
-            <div style="text-align: left; font-size: 0.85em; margin: 10px 0;">
-                <input type="checkbox" onclick="toggleVisibility()" style="width: auto; margin-right: 5px;"> 
-                Show Passwords
+            <div class="checkbox-container">
+                <label>
+                    <input type="checkbox" onclick="toggleVisibility()"> 
+                    Show Passwords
+                </label>
             </div>
 
             <button type="submit">Update Password</button>
