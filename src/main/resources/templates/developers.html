@@ -127,7 +127,7 @@
             <button th:if="${isAdmin}" class="edit-btn thanks-edit" onclick="openMessageModal()">✏️</button>
             <h2 class="thanks-title">Special Thanks</h2>
             <div class="thanks-message">
-                <p id="currentThanksDisplay" th:text="${specialThanks != null ? specialThanks : 'We would like to express our deepest gratitude to everyone who supported us in making the BALIK GAMIT system a reality...'}"></p>
+                <p id="currentThanksDisplay" th:text="${specialThanks != null ? specialThanks : 'Our sincerest thanks go to our professor, Sir Arjet Ragub Millan, for his constant encouragement and technical insights throughout the development of BALIK GAMIT. His dedication to teaching and his belief in our team’s potential provided us with the motivation needed to overcome every challenge we faced.'}"></p>
             </div>
             <div style="margin-top: 40px;">
                 <a th:href="@{/}" style="color: white; text-decoration: none; border: 2px solid white; padding: 12px 30px; border-radius: 50px; font-weight: 600;">← Back Home</a>
