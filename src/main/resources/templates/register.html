@@ -320,7 +320,6 @@
                 }, 400);
             }
 
-            // --- CORE FUNCTIONS ---
             function requestRegistrationOtp() {
                 const email = document.getElementById('email').value;
                 const btn = document.getElementById('sendOtpBtn');
@@ -335,29 +334,38 @@
                 }
 
                 btn.disabled = true;
-                timerText.style.display = "block";
-                let timeLeft = 60;
-
-                countdown = setInterval(() => {
-                    timeLeft--;
-                    secondsSpan.innerText = timeLeft;
-                    if (timeLeft <= 0) {
-                        clearInterval(countdown);
-                        btn.disabled = false;
-                        timerText.style.display = "none";
-                    }
-                }, 1000);
 
                 fetch('/send-otp?email=' + email, { method: 'POST' })
-                    .then(res => {
-                        if(res.ok) {
-                            showCentralNotif('Code Sent!', 'We have sent a 6-digit verification code to your email. Please check your inbox.', 'fa-envelope-circle-check');
+                    .then(res => res.text()) // Get text response (OK or SKIP)
+                    .then(data => {
+                        if (data === "SKIP") {
+                            // TOGGLE OFF: Bypass OTP
+                            showCentralNotif('Verification Paused', 'Email verification is currently disabled. You may proceed.', 'fa-circle-check');
+                            otpSection.style.display = "none"; 
+                            // Fill dummy value so back-end doesn't complain about null
+                            document.getElementsByName('userOtp')[0].value = "000000"; 
+                            finalBtn.style.display = "block";
+                            finalBtn.innerText = "Register Now";
+                        } else if (data === "OK") {
+                            // TOGGLE ON: Normal OTP flow
+                            showCentralNotif('Code Sent!', 'Check your inbox for the 6-digit code.', 'fa-envelope-circle-check');
                             otpSection.style.display = "block";
                             finalBtn.style.display = "block";
+                            
+                            timerText.style.display = "block";
+                            let timeLeft = 60;
+                            countdown = setInterval(() => {
+                                timeLeft--;
+                                secondsSpan.innerText = timeLeft;
+                                if (timeLeft <= 0) {
+                                    clearInterval(countdown);
+                                    btn.disabled = false;
+                                    timerText.style.display = "none";
+                                }
+                            }, 1000);
                         } else {
-                            showCentralNotif('Error', 'We could not send the OTP. Please try again later.', 'fa-triangle-exclamation');
+                            showCentralNotif('Error', 'Could not send OTP.', 'fa-triangle-exclamation');
                             btn.disabled = false;
-                            clearInterval(countdown);
                         }
                     });
             }
@@ -384,13 +392,13 @@
                 const idStatus = document.getElementById('id-status');
 
                 if (studentId.length === 9) {
-                    idStatus.innerHTML = '<span class="checking-spinner"></span> Checking availability...';
+                    idStatus.innerHTML = '<span class="checking-spinner"></span> Checking...';
                     idStatus.style.color = '#3498db';
 
                     fetch('/check-id?studentId=' + studentId)
                         .then(res => res.json())
-                        .then(data => {
-                            if (data.available) {
+                        .then(isAvailable => { // This is now a direct boolean
+                            if (isAvailable) {
                                 idStatus.innerHTML = '✅ ID is available';
                                 idStatus.style.color = '#27ae60';
                             } else {

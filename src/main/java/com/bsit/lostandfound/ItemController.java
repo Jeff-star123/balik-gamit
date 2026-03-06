@@ -1,6 +1,7 @@
 package com.bsit.lostandfound;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Controller;
@@ -32,6 +33,10 @@ public class ItemController {
     // Use the Resend service instead of JavaMailSender
     @Autowired
     private com.bsit.lostandfound.service.OtpService otpService;
+
+    // TOGGLE FEATURE: Read from application.properties
+    @Value("${app.feature.email-verification:true}")
+    private boolean emailEnabled;
 
     // FIELDS FOR DEVELOPERS
     private static List<Developer> developerList = new ArrayList<>();
@@ -296,6 +301,15 @@ public class ItemController {
     public String completeRegistration(@RequestParam String studentId, @RequestParam String name, 
                                     @RequestParam String email, @RequestParam String password,
                                     @RequestParam String userOtp, HttpSession session, Model model) {
+        if (!emailEnabled) {
+            if (studentRepository.existsById(studentId)) {
+                model.addAttribute("error", "Student ID already exists!");
+                return "register";
+            }
+            studentRepository.save(new Student(studentId, password, name, email, false));
+            return "redirect:/login?registered=true";
+        }
+
         String sessionOtp = (String) session.getAttribute("regOtp");
         if (sessionOtp == null || !sessionOtp.equals(userOtp)) {
             model.addAttribute("error", "Invalid or expired OTP code.");
@@ -307,18 +321,17 @@ public class ItemController {
         }
         studentRepository.save(new Student(studentId, password, name, email, false));
         session.removeAttribute("regOtp");
-        return "redirect:/login?registered=true"; 
+        return "redirect:/login?registered=true";
     }
 
     @PostMapping("/send-otp")
     @ResponseBody
     public String sendSimpleOtp(@RequestParam String email, HttpSession session) {
+        if (!emailEnabled) return "SKIP"; // Stop here if disabled
+
         String otp = String.valueOf(new Random().nextInt(900000) + 100000);
         session.setAttribute("regOtp", otp);
-        
-        // Updated to use Resend
         otpService.sendOtp(email, otp);
-        
         return "OK";
     }
 
