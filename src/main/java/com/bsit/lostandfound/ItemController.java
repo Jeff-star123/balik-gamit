@@ -3,8 +3,6 @@ package com.bsit.lostandfound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +25,9 @@ public class ItemController {
     @Autowired
     private StudentRepository studentRepository;
 
+    // Use the Resend service instead of JavaMailSender
     @Autowired
-    private JavaMailSender mailSender;
-
-    
+    private com.bsit.lostandfound.service.OtpService otpService;
 
     // FIELDS FOR DEVELOPERS
     private static List<Developer> developerList = new ArrayList<>();
@@ -52,7 +49,7 @@ public class ItemController {
         }
     }
 
-    // --- HELPER METHODS (Fixed Duplicates) ---
+    // --- HELPER METHODS ---
     private String handleFileUpload(MultipartFile file) throws IOException {
         if (file.isEmpty()) return "default.jpg";
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -176,7 +173,6 @@ public class ItemController {
         Student loggedIn = (Student) session.getAttribute("loggedInStudent");
         if (loggedIn == null) return "Unauthorized";
 
-        // Standardized Security Check: Verify BOTH Password and Email for any major change
         if (action.equals("DELETE_ACCOUNT") || action.equals("CHANGE_EMAIL") || action.equals("CHANGE_PASSWORD")) {
             if (!loggedIn.getEmail().equalsIgnoreCase(emailCheck)) {
                 return "The email provided does not match your account.";
@@ -186,16 +182,12 @@ public class ItemController {
             }
         }
 
-        // If checks pass, generate and send OTP
         String otp = String.valueOf(new Random().nextInt(900000) + 100000);
         session.setAttribute("settingsOtp", otp);
         session.setAttribute("pendingAction", action);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(loggedIn.getEmail());
-        message.setSubject("Security Verification Code - BALIK GAMIT");
-        message.setText("You requested a " + action.replace("_", " ") + ". Your verification code is: " + otp);
-        mailSender.send(message);
+        // Updated to use Resend
+        otpService.sendOtp(loggedIn.getEmail(), otp);
 
         return "OTP Sent to " + loggedIn.getEmail();
     }
@@ -267,11 +259,10 @@ public class ItemController {
     public String sendSimpleOtp(@RequestParam String email, HttpSession session) {
         String otp = String.valueOf(new Random().nextInt(900000) + 100000);
         session.setAttribute("regOtp", otp);
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Registration OTP");
-        message.setText("Your code is: " + otp);
-        mailSender.send(message);
+        
+        // Updated to use Resend
+        otpService.sendOtp(email, otp);
+        
         return "OK";
     }
 
@@ -352,11 +343,10 @@ public class ItemController {
             String otp = String.valueOf(new Random().nextInt(900000) + 100000);
             session.setAttribute("resetOtp", otp);
             session.setAttribute("resetStudentId", student.getStudentId());
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(student.getEmail());
-            message.setSubject("Password Reset - BALIK GAMIT");
-            message.setText("Your reset code is: " + otp);
-            mailSender.send(message);
+            
+            // Updated to use Resend exclusively
+            otpService.sendOtp(student.getEmail(), otp);
+            
             return "redirect:/forgot-password/verify-otp"; 
         }).orElseGet(() -> {
             model.addAttribute("error", "No account found with that email address!");
@@ -400,11 +390,10 @@ public class ItemController {
             return studentRepository.findById(studentId).map(student -> {
                 String otp = String.valueOf(new Random().nextInt(900000) + 100000);
                 session.setAttribute("resetOtp", otp);
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setTo(student.getEmail());
-                message.setSubject("Resend: Password Reset - BALIK GAMIT");
-                message.setText("Your new reset code is: " + otp);
-                mailSender.send(message);
+                
+                // Updated to use Resend
+                otpService.sendOtp(student.getEmail(), otp);
+                
                 return "OTP Sent!";
             }).orElse("Error");
         }
