@@ -13,15 +13,13 @@
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
         }
 
         @keyframes gradientBG {
@@ -30,185 +28,86 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 1. Full Width Header */
         .full-header {
-            width: 100%;
-            height: 350px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border-bottom: 8px solid rgba(255,255,255,0.2);
+            width: 100%; height: 350px;
+            position: relative; display: flex;
+            align-items: center; justify-content: center;
+            overflow: hidden; border-bottom: 8px solid rgba(255,255,255,0.2);
         }
 
         .header-bg-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            z-index: 1;
-            filter: brightness(0.4);
+            width: 100%; height: 100%;
+            object-fit: cover; position: absolute;
+            z-index: 1; filter: brightness(0.4);
         }
 
-        .header-text {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: white;
-        }
+        .header-text { position: relative; z-index: 2; text-align: center; color: white; }
+        .header-text h1 { font-size: 4.5rem; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
-        .header-text h1 {
-            font-size: 4.5rem;
-            margin: 0;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-
-        /* 2. Main Layout */
         .main-layout {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 40px;
-            max-width: 1500px;
-            margin: 50px auto;
-            padding: 0 50px;
-            flex-grow: 1;
-            align-items: start;
+            display: grid; grid-template-columns: 1fr 1.5fr;
+            gap: 40px; max-width: 1500px;
+            margin: 50px auto; padding: 0 50px;
+            flex-grow: 1; align-items: start;
         }
 
-        /* 3. Left Column: Special Thanks */
         .thanks-column {
-            position: sticky;
-            top: 20px;
+            position: sticky; top: 20px;
             background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            border-radius: 40px;
-            padding: 60px 40px;
-            color: white;
+            backdrop-filter: blur(20px); border-radius: 40px;
+            padding: 60px 40px; color: white;
             border: 1px solid rgba(255,255,255,0.3);
-            text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.1);
         }
 
-        .thanks-title {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 30px;
-        }
+        .thanks-title { font-size: 3rem; font-weight: 800; margin-bottom: 30px; }
+        .thanks-message { font-size: 1.4rem; line-height: 1.8; white-space: pre-wrap; }
 
-        .thanks-message {
-            font-size: 1.4rem;
-            line-height: 1.8;
-            white-space: pre-wrap;
-        }
-
-        /* 4. Right Column: BIGGER Developers */
-        .dev-column {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
+        .dev-column { display: flex; flex-direction: column; gap: 30px; }
 
         .dev-card-big {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            padding: 35px;
-            border-radius: 35px;
-            display: flex;
-            align-items: center;
-            gap: 35px;
+            background: var(--glass); backdrop-filter: blur(10px);
+            padding: 35px; border-radius: 35px;
+            display: flex; align-items: center; gap: 35px;
             border: 1px solid rgba(255,255,255,0.5);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
 
-        .dev-card-big:hover {
-            transform: scale(1.03) translateX(10px);
-            box-shadow: 0 20px 45px rgba(0,0,0,0.15);
+        /* Styling for the 6th (Last) Developer */
+        .featured-dev {
+            transform: scale(1.05);
+            border: 3px solid #23a6d5;
+            background: #ffffff;
+            box-shadow: 0 25px 50px rgba(35, 166, 213, 0.2);
         }
 
-        .dev-img-box {
-            position: relative;
-            flex-shrink: 0;
-        }
+        .featured-dev .dev-img { width: 200px; height: 200px; border-color: #23a6d5; }
+        .featured-dev h3 { font-size: 2.5rem; color: #23a6d5; }
 
-        .dev-img {
-            width: 160px;
-            height: 160px;
-            border-radius: 25px;
-            object-fit: cover;
-            border: 6px solid white;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
+        .dev-card-big:hover { transform: scale(1.03) translateX(10px); }
+        .dev-img-box { position: relative; flex-shrink: 0; }
+        .dev-img { width: 160px; height: 160px; border-radius: 25px; object-fit: cover; border: 6px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .dev-info h3 { margin: 0; font-size: 2rem; color: var(--text-dark); font-weight: 800; }
+        .role-badge-big { display: inline-block; background: var(--primary-grad); color: white; padding: 8px 20px; border-radius: 12px; font-size: 1rem; font-weight: 600; margin: 15px 0; text-transform: uppercase; letter-spacing: 1px; }
+        .section-text { margin: 0; color: #636e72; font-size: 1.1rem; font-weight: 500; }
 
-        .dev-info h3 {
-            margin: 0;
-            font-size: 2rem;
-            color: var(--text-dark);
-            font-weight: 800;
-        }
-
-        .role-badge-big {
-            display: inline-block;
-            background: var(--primary-grad);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            margin: 15px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .section-text {
-            margin: 0;
-            color: #636e72;
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        /* Admin Buttons */
-        .edit-btn {
-            background: #ff7675;
-            color: white;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 5px 15px rgba(255, 118, 117, 0.4);
-        }
-
+        .edit-btn { background: #ff7675; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 5px 15px rgba(255, 118, 117, 0.4); }
         .banner-edit { position: absolute; top: 30px; right: 30px; }
         .thanks-edit { position: absolute; top: 20px; right: 20px; }
         .card-edit { position: absolute; bottom: -10px; right: -10px; }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 1000;
-            justify-content: center; align-items: center;
-        }
-        .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: 30px;
-            width: 100%;
-            max-width: 500px;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 40px; border-radius: 30px; width: 100%; max-width: 500px; }
         textarea { width: 100%; height: 250px; padding: 15px; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; font-size: 1rem; }
-        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box;}
+        
+        /* Responsive Fix */
+        @media (max-width: 1024px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .thanks-column { position: relative; top: 0; }
+            .header-text h1 { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -228,11 +127,7 @@
             <button th:if="${isAdmin}" class="edit-btn thanks-edit" onclick="openMessageModal()">✏️</button>
             <h2 class="thanks-title">Special Thanks</h2>
             <div class="thanks-message">
-                <p id="currentThanksDisplay" th:text="${specialThanks != null ? specialThanks : 'We would like to express our deepest gratitude to everyone who supported us in making the BALIK GAMIT system a reality. 
-
-OUR MENTOR 
-
-A special note of thanks to Sir Arjet Ragub Millan. Thank you, Sir, for your invaluable guidance, patience, and technical expertise. Your mentorship was the compass that helped us navigate the complexities of this system. We are truly grateful for the time you invested in our growth.'}"></p>
+                <p id="currentThanksDisplay" th:text="${specialThanks != null ? specialThanks : 'We would like to express our deepest gratitude to everyone who supported us in making the BALIK GAMIT system a reality...'}"></p>
             </div>
             <div style="margin-top: 40px;">
                 <a th:href="@{/}" style="color: white; text-decoration: none; border: 2px solid white; padding: 12px 30px; border-radius: 50px; font-weight: 600;">← Back Home</a>
@@ -242,7 +137,12 @@ A special note of thanks to Sir Arjet Ragub Millan. Thank you, Sir, for your inv
         <section class="dev-column">
             <div th:each="dev, iterStat : ${developers}" 
                 class="dev-card-big" 
-                th:classappend="${iterStat.last} ? 'featured-dev' : ''">
+                th:id="'dev-card-' + ${iterStat.index}"
+                th:classappend="${iterStat.last} ? 'featured-dev' : ''"
+                th:data-id="${dev.id}"
+                th:data-name="${dev.name}"
+                th:data-contrib="${dev.contributions}"
+                th:data-section="${dev.section}">
                 
                 <div class="dev-img-box">
                     <img th:src="${dev.photoUrl}" class="dev-img">
@@ -265,11 +165,12 @@ A special note of thanks to Sir Arjet Ragub Millan. Thank you, Sir, for your inv
         <div class="modal-content">
             <h2 id="modalTitle" style="margin-top:0;">Update Content</h2>
             <form id="updateForm" th:action="@{/developers/update}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id" id="editId">
                 <input type="hidden" name="devIndex" id="devIndex">
                 
                 <div id="devGroup">
-                    <label>Profile Image:</label><br>
-                    <input type="file" name="photo"><br><br>
+                    <label>Profile Image:</label>
+                    <input type="file" name="photo">
                     <input type="text" name="name" id="editName" placeholder="Full Name">
                     <input type="text" name="contributions" id="editContrib" placeholder="Role">
                     <input type="text" name="section" id="editSection" placeholder="Section">
@@ -290,7 +191,15 @@ A special note of thanks to Sir Arjet Ragub Millan. Thank you, Sir, for your inv
 
     <script>
         function openDevModal(index) {
-            document.getElementById('devIndex').value = index;
+            // Get the card element
+            const card = document.getElementById('dev-card-' + index);
+            
+            // Extract data from attributes
+            document.getElementById('editId').value = card.getAttribute('data-id');
+            document.getElementById('editName').value = card.getAttribute('data-name');
+            document.getElementById('editContrib').value = card.getAttribute('data-contrib');
+            document.getElementById('editSection').value = card.getAttribute('data-section');
+            
             document.getElementById('modalTitle').innerText = "Edit Developer";
             document.getElementById('devGroup').style.display = 'block';
             document.getElementById('thanksGroup').style.display = 'none';
@@ -299,23 +208,27 @@ A special note of thanks to Sir Arjet Ragub Millan. Thank you, Sir, for your inv
         }
 
         function openBannerModal() {
-            document.getElementById('devIndex').value = -1;
+            document.getElementById('editId').value = ""; // Clear the ID
+            document.getElementById('modalTitle').innerText = "Edit Banner";
             document.getElementById('modalTitle').innerText = "Edit Banner";
             document.getElementById('devGroup').style.display = 'block'; 
             document.getElementById('thanksGroup').style.display = 'none';
             toggleInputs(false);
+            // Hide text fields for banner mode
+            document.getElementById('editName').style.display = 'none';
+            document.getElementById('editContrib').style.display = 'none';
+            document.getElementById('editSection').style.display = 'none';
             document.getElementById('editModal').style.display = 'flex';
         }
 
         function openMessageModal() {
-            document.getElementById('devIndex').value = -2;
+            document.getElementById('editId').value = ""; // Clear the ID
+            document.getElementById('modalTitle').innerText = "Edit Special Thanks";
             document.getElementById('modalTitle').innerText = "Edit Special Thanks";
             document.getElementById('devGroup').style.display = 'none';
             document.getElementById('thanksGroup').style.display = 'block';
-            
             const currentMessage = document.getElementById('currentThanksDisplay').innerText;
             document.getElementById('editThanksText').value = currentMessage;
-            
             toggleInputs(true);
             document.getElementById('editModal').style.display = 'flex';
         }
@@ -325,15 +238,14 @@ A special note of thanks to Sir Arjet Ragub Millan. Thank you, Sir, for your inv
             document.getElementById('editContrib').disabled = isThanksMode;
             document.getElementById('editSection').disabled = isThanksMode;
             document.getElementById('editThanksText').disabled = !isThanksMode;
+            // Reset visibility
+            document.getElementById('editName').style.display = isThanksMode ? 'none' : 'block';
+            document.getElementById('editContrib').style.display = isThanksMode ? 'none' : 'block';
+            document.getElementById('editSection').style.display = isThanksMode ? 'none' : 'block';
         }
 
-        function closeModal() {
-            document.getElementById('editModal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('editModal')) closeModal();
-        }
+        function closeModal() { document.getElementById('editModal').style.display = 'none'; }
+        window.onclick = function(event) { if (event.target == document.getElementById('editModal')) closeModal(); }
     </script>
 </body>
 </html>

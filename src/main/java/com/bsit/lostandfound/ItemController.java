@@ -133,39 +133,62 @@ public class ItemController {
         Student user = (Student) session.getAttribute("loggedInStudent");
         boolean isAdmin = (user != null && user.isIsAdmin()); 
         
-        // CHANGE: Fetch from the database repository instead of the static list
+        // Always pull from devRepo (Database)
         model.addAttribute("developers", devRepo.findAll());
-        
-        model.addAttribute("bannerUrl", bannerUrl);
         model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("bannerUrl", bannerUrl);
+        
+        // Check if there's a saved "thanks" in session or elsewhere, 
+        // otherwise it uses the default in your HTML
         return "developers";
     }
 
     @PostMapping("/developers/update")
-    public String updateDeveloper(@RequestParam("devIndex") int index,
-                                @RequestParam(value="name", required=false) String name,
-                                @RequestParam(value="contributions", required=false) String contributions,
-                                @RequestParam(value="section", required=false) String section,
-                                @RequestParam("photo") MultipartFile photo,
-                                HttpSession session) throws IOException {
-        
+    public String updateDeveloper(
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "contributions", required = false) String contributions,
+            @RequestParam(value = "section", required = false) String section,
+            @RequestParam(value = "specialThanks", required = false) String specialThanks,
+            @RequestParam(value = "photo", required = false) MultipartFile photo,
+            @RequestParam(value = "devIndex", required = false) Integer devIndex,
+            HttpSession session) throws IOException {
+
+        // 1. Check Admin Permission
         Student user = (Student) session.getAttribute("loggedInStudent");
-        if (user == null || !user.isIsAdmin()) {
-            return "redirect:/developers?error=unauthorized";
+        if (user == null || !user.isIsAdmin()) return "redirect:/login";
+
+        // 2. Handle Banner Update (devIndex -1 is your Banner)
+        if (devIndex != null && devIndex == -1 && photo != null && !photo.isEmpty()) {
+            this.bannerUrl = "/uploads/" + handleFileUpload(photo);
         }
 
-        String fileName = photo.isEmpty() ? null : handleFileUpload(photo);
-
-        if (index == -1) { 
-            if (fileName != null) bannerUrl = "/uploads/" + fileName;
-        } else if (index >= 0 && index < developerList.size()) { 
-            Developer dev = developerList.get(index);
-            if (name != null && !name.isEmpty()) dev.setName(name);
-            if (contributions != null && !contributions.isEmpty()) dev.setContributions(contributions);
-            if (section != null && !section.isEmpty()) dev.setSection(section);
-            if (fileName != null) dev.setPhotoUrl("/uploads/" + fileName);
+        // 3. Handle Special Thanks Update (devIndex -2 is your Thanks)
+        if (specialThanks != null && !specialThanks.trim().isEmpty()) {
+            // Since you don't have a Settings table, we store it in the session 
+            // so it persists during this session.
+            session.getServletContext().setAttribute("globalSpecialThanks", specialThanks);
         }
-        return "redirect:/developers?success=true";
+
+        // 4. Handle Developer Updates
+        if (id != null) {
+            Developer dev = devRepo.findById(id).orElse(null);
+            if (dev != null) {
+                dev.setName(name);
+                dev.setContributions(contributions);
+                dev.setSection(section);
+                
+                // Save photo if uploaded
+                if (photo != null && !photo.isEmpty()) {
+                    String fileName = handleFileUpload(photo);
+                    dev.setPhotoUrl("/uploads/" + fileName);
+                }
+                
+                devRepo.save(dev); 
+            }
+        } 
+
+        return "redirect:/developers";
     }
 
     @PostMapping("/developers/edit")
