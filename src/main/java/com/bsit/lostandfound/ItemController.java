@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Controller
 public class ItemController {
@@ -200,12 +201,14 @@ public class ItemController {
         return "redirect:/developers";
     }
 
-    // --- FB
+    // --- FB SHARE VIEW ---
     @GetMapping("/item/{id}")
-    public String viewItem(@PathVariable Long id, Model model) {
-        LostItem item = itemRepo.findById(id).orElse(null);
-        model.addAttribute("item", item);
-        return "view-item"; // This would be a new HTML file in templates
+    public String viewItem(@PathVariable("id") Long id, Model model) {
+        // Fixed: changed 'itemRepo' to 'repository' to match your @Autowired field
+        return repository.findById(id).map(item -> {
+            model.addAttribute("item", item);
+            return "view-item";
+        }).orElse("redirect:/"); 
     }
 
     // --- SETTINGS LOGIC ---
