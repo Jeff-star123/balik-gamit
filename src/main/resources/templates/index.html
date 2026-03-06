@@ -428,7 +428,10 @@
                     <span class="category-tag" th:text="${item.category}">Category</span>
                     <h3 th:text="${item.name}" style="margin: 5px 0 10px 0;">Item Name</h3>
                     <p class="item-description" th:text="${item.description}" style="font-size: 0.9rem; color: #555;">Desc</p>
-                    <p style="font-size: 0.85rem;"><strong>📞 Contact:</strong> <span th:text="${item.contactInfo}"></span></p>
+                    <p style="font-size: 0.85rem;">
+                        <strong>📞 Contact:</strong> 
+                        <span class="linkify-contact" th:text="${item.contactInfo}"></span>
+                    </p>
                     
                     <div th:if="${session.loggedInStudent != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}" 
                          style="margin-top:15px; display:flex; gap:10px;">
@@ -515,6 +518,30 @@
                 }
             });
         }
+    </script>
+        <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Find all contact spans
+        const contactFields = document.querySelectorAll('.linkify-contact');
+        
+        contactFields.forEach(field => {
+            const originalText = field.innerText.trim();
+            
+            // Regex to detect URLs (http, https, or www)
+            const urlPattern = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+            
+            if (urlPattern.test(originalText)) {
+                field.innerHTML = originalText.replace(urlPattern, function(url) {
+                    let href = url;
+                    // If it starts with www, add http so the link works correctly
+                    if (!href.match(/^https?:\/\//)) {
+                        href = 'http://' + href;
+                    }
+                    return `<a href="${href}" target="_blank" style="color: #23a6d5; text-decoration: underline; font-weight: 600;">${url}</a>`;
+                });
+            }
+        });
+    });
     </script>
 </body>
 </html>

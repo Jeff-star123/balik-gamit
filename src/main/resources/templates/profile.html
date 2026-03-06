@@ -329,5 +329,29 @@
             </div>
         </div>
     </main>
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Find all contact spans
+            const contactFields = document.querySelectorAll('.linkify-contact');
+            
+            contactFields.forEach(field => {
+                const originalText = field.innerText.trim();
+                
+                // Regex to detect URLs (http, https, or www)
+                const urlPattern = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+                
+                if (urlPattern.test(originalText)) {
+                    field.innerHTML = originalText.replace(urlPattern, function(url) {
+                        let href = url;
+                        // If it starts with www, add http so the link works correctly
+                        if (!href.match(/^https?:\/\//)) {
+                            href = 'http://' + href;
+                        }
+                        return `<a href="${href}" target="_blank" style="color: #23a6d5; text-decoration: underline; font-weight: 600;">${url}</a>`;
+                    });
+                }
+            });
+        });
+        </script>
 </body>
 </html>
