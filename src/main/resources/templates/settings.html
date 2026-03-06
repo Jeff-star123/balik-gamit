@@ -31,63 +31,26 @@
             transform: translateY(-2px);
         }
 
-        /* 1. Reset browser defaults */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* 2. Ensure the Body doesn't center its children */
         body {
             display: flex;
-            flex-direction: row; /* Force side-by-side layout */
+            flex-direction: row;
             align-items: stretch;
-            justify-content: flex-start; /* Force everything to the left */
+            justify-content: flex-start;
             text-align: left;
-        }
-
-        /* 3. Explicit Sidebar Positioning */
-        .sidebar {
-            width: 250px;
-            min-width: 250px;
-            height: 100vh;
-            position: sticky; /* Or fixed */
-            top: 0;
-            left: 0;
-            /* Ensure it doesn't shrink */
-            flex-shrink: 0; 
-        }
-
-        :root {
-            --glass: rgba(255, 255, 255, 0.15);
-            --glass-heavy: rgba(255, 255, 255, 0.95);
-            --sidebar-width: 280px;
-            --text-main: #2d3436;
-            --text-sub: #636e72;
-            --card-border: rgba(255, 255, 255, 0.5);
-            --accent: #764ba2;
-            --found-green: #00b894;
-            --lost-red: #ff7675;
-        }
-
-        [data-theme="dark"] {
-            --glass: rgba(0, 0, 0, 0.3);
-            --glass-heavy: rgba(30, 30, 30, 0.95);
-            --text-main: #f5f6fa;
-            --text-sub: #b2bec3;
-            --card-border: rgba(255, 255, 255, 0.1);
-        }
-
-        body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             min-height: 100vh;
-            display: flex;
             color: var(--text-main);
+            transition: color 0.3s ease;
         }
 
         @keyframes gradientBG {
@@ -95,7 +58,7 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        /* --- FIGMA & DARK MODE THEMING --- */
+
         :root {
             --glass: rgba(255, 255, 255, 0.15);
             --glass-heavy: rgba(255, 255, 255, 0.95);
@@ -111,24 +74,6 @@
             --text-main: #f5f6fa;
             --card-bg: #2d3436;
             --input-bg: #3d4446;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            min-height: 100vh;
-            display: flex;
-            color: var(--text-main);
-            transition: color 0.3s ease;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         /* --- SIDEBAR --- */
@@ -184,6 +129,32 @@
         .settings-card h3 { margin-top: 0; font-size: 1.3rem; color: #1e272e; font-weight: 800; }
         [data-theme="dark"] .settings-card h3 { color: #f5f6fa !important; }
         .danger-zone { border: 2px solid #ff7675; }
+
+        /* Logout Section Styling */
+        .logout-section {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .btn-logout-settings {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: #636e72;
+            color: white !important;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 18px;
+            font-weight: 700;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        .btn-logout-settings:hover {
+            background: #2d3436;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+        }
 
         /* --- INPUTS & BUTTONS --- */
         input {
@@ -267,11 +238,7 @@
         }
 
         [data-theme="dark"] .figma-modal { background: #2d3436; color: white; }
-
-        .figma-modal.active {
-            transform: scale(1);
-            opacity: 1;
-        }
+        .figma-modal.active { transform: scale(1); opacity: 1; }
 
         .modal-icon-container {
             width: 80px;
@@ -287,22 +254,9 @@
             box-shadow: 0 15px 30px rgba(35, 213, 171, 0.3);
         }
 
-        .modal-content h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #1e272e;
-        }
-
+        .modal-content h3 { margin: 0 0 10px 0; font-size: 1.5rem; font-weight: 800; color: #1e272e; }
         [data-theme="dark"] .modal-content h3 { color: #f5f6fa; }
-
-        .modal-content p {
-            margin: 0 0 25px 0;
-            color: #636e72;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
+        .modal-content p { margin: 0 0 25px 0; color: #636e72; font-size: 0.95rem; line-height: 1.5; }
         [data-theme="dark"] .modal-content p { color: #b2bec3; }
 
         .modal-btn {
@@ -343,9 +297,6 @@
             <li><a th:href="@{/profile}"><i class="fa-solid fa-user"></i> Profile</a></li>
             <li><a th:href="@{/settings}" class="active"><i class="fa-solid fa-gear"></i> Settings</a></li>
         </ul>
-        <div style="margin-top: auto;">
-            <a th:href="@{/logout}" class="nav-link" style="color: #ff7675;" onclick="return confirm('Log out?')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-        </div>
     </nav>
 
     <main class="main-content">
@@ -396,6 +347,16 @@
                     <input type="email" name="newDetail" placeholder="New Email Address" required>
                     <button type="submit" class="btn-save">Update Email</button>
                 </form>
+            </div>
+
+            <div class="settings-card logout-section">
+                <h3>Session Management</h3>
+                <p style="margin-bottom: 20px; color: var(--text-main); font-size: 0.9rem; opacity: 0.8;">
+                    Finished for now? Log out to keep your account secure.
+                </p>
+                <a th:href="@{/logout}" class="btn-logout-settings" onclick="return confirm('Are you sure you want to log out?')">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout of Balik Gamit
+                </a>
             </div>
 
             <div class="settings-card danger-zone">
@@ -452,7 +413,7 @@
             localStorage.setItem('theme', theme);
         });
 
-        // --- UNIFIED SECURE OTP LOGIC (Updated with Figma Modal) ---
+        // --- UNIFIED SECURE OTP LOGIC ---
         function requestSecureOtp(action, emailId, passId, btnId, currentStepId, nextStepId) {
             const emailVal = document.getElementById(emailId).value;
             const passVal = document.getElementById(passId).value;
