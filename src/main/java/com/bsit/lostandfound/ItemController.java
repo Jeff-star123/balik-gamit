@@ -293,22 +293,9 @@ public class ItemController {
         return "redirect:/settings?success";
     }
 
-    @PostMapping("/register")
-    public String registerStudent(@ModelAttribute Student student, HttpSession session) {
-        // Check the toggle
-        if (!emailEnabled) { 
-            // IF PAUSED: Save directly to database
-            studentRepository.save(student);
-            return "redirect:/login?success"; 
-        } else {
-            // IF WORKING: Generate OTP and redirect to verify page
-            String otp = String.valueOf(new Random().nextInt(900000) + 100000);
-            session.setAttribute("pendingStudent", student);
-            session.setAttribute("regOtp", otp);
-            otpService.sendOtp(student.getEmail(), otp);
-            return "redirect:/verify-registration-otp";
-        }
-    }
+    // --- REGISTRATION LOGIC ---
+    @GetMapping("/register")
+    public String showRegisterPage() { return "register"; }
 
     @PostMapping("/register/send-otp")
     public String completeRegistration(@RequestParam String studentId, @RequestParam String name, 
