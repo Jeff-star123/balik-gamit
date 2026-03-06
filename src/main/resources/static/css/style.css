@@ -361,4 +361,24 @@ input, select, textarea {
         transform: scale(1);
     }
 }
+.share-btn {
+    background-color: #1877F2;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.share-btn:hover {
+    background-color: #166fe5;
+    transform: translateY(-2px);
+}
 }

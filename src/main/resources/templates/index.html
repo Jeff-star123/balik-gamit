@@ -79,6 +79,7 @@
             --accent: #764ba2;
             --found-green: #00b894;
             --lost-red: #ff7675;
+            --fb-blue: #1877F2;
         }
 
         [data-theme="dark"] {
@@ -197,6 +198,8 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             transition: 0.3s;
             border: 1px solid white;
+            display: flex;
+            flex-direction: column;
         }
         .item-card:hover { transform: translateY(-10px); }
         .image-container { position: relative; height: 200px; }
@@ -215,7 +218,7 @@
         .status-badge.lost { background: var(--lost-red) !important; color: white !important; }
         .status-badge.found { background: var(--found-green) !important; color: white !important; }
 
-        .card-content { padding: 20px; }
+        .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
         .category-tag { font-size: 0.75rem; color: #764ba2; font-weight: 700; text-transform: uppercase; }
 
         .post-panel {
@@ -237,7 +240,29 @@
             border-radius: 30px;
         }
 
-        /* --- NEW: FIGMA CENTRAL NOTIFICATION STYLES --- */
+        /* --- SHARE BUTTON STYLE --- */
+        .btn-fb-share {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background: var(--fb-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .btn-fb-share:hover {
+            background: #166fe5;
+            transform: scale(1.02);
+        }
+
+        /* --- FIGMA CENTRAL NOTIFICATION STYLES --- */
         #central-notif-overlay {
             display: none;
             position: fixed;
@@ -433,6 +458,10 @@
                         <span class="linkify-contact" th:text="${item.contactInfo}"></span>
                     </p>
                     
+                    <button class="btn-fb-share" th:onclick="'shareOnFacebook(\'https://yourdomain.com/item/' + ${item.id} + '\')'">
+                        <i class="fa-brands fa-facebook"></i> Share to Facebook
+                    </button>
+
                     <div th:if="${session.loggedInStudent != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}" 
                          style="margin-top:15px; display:flex; gap:10px;">
                         <form th:action="@{'/finish/' + ${item.id}}" method="post" style="flex:1;" onsubmit="showCentralNotif('Verified!', 'Item successfully marked as finished.');">
@@ -470,6 +499,12 @@
             setTimeout(() => {
                 document.getElementById('central-notif-overlay').style.display = 'none';
             }, 400);
+        }
+
+        // --- FACEBOOK SHARE FUNCTION ---
+        function shareOnFacebook(postUrl) {
+            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
+            window.open(facebookUrl, 'facebook-share-dialog', 'width=626,height=436');
         }
 
         // --- ORIGINAL DASHBOARD FUNCTIONS ---
@@ -519,21 +554,15 @@
             });
         }
     </script>
-        <script>
+    <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Find all contact spans
         const contactFields = document.querySelectorAll('.linkify-contact');
-        
         contactFields.forEach(field => {
             const originalText = field.innerText.trim();
-            
-            // Regex to detect URLs (http, https, or www)
             const urlPattern = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-            
             if (urlPattern.test(originalText)) {
                 field.innerHTML = originalText.replace(urlPattern, function(url) {
                     let href = url;
-                    // If it starts with www, add http so the link works correctly
                     if (!href.match(/^https?:\/\//)) {
                         href = 'http://' + href;
                     }

@@ -200,6 +200,14 @@ public class ItemController {
         return "redirect:/developers";
     }
 
+    // --- FB
+    @GetMapping("/item/{id}")
+    public String viewItem(@PathVariable Long id, Model model) {
+        LostItem item = itemRepo.findById(id).orElse(null);
+        model.addAttribute("item", item);
+        return "view-item"; // This would be a new HTML file in templates
+    }
+
     // --- SETTINGS LOGIC ---
     @GetMapping("/settings")
     public String showSettings(HttpSession session, Model model) {
