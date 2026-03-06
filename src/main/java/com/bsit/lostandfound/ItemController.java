@@ -133,13 +133,15 @@ public class ItemController {
         Student user = (Student) session.getAttribute("loggedInStudent");
         boolean isAdmin = (user != null && user.isIsAdmin()); 
         
-        // Always pull from devRepo (Database)
+        // 1. Get the global thanks from the servlet context
+        String savedThanks = (String) session.getServletContext().getAttribute("globalSpecialThanks");
+        
+        // 2. Add everything to the model
         model.addAttribute("developers", devRepo.findAll());
         model.addAttribute("isAdmin", isAdmin);
-        model.addAttribute("bannerUrl", bannerUrl);
+        model.addAttribute("bannerUrl", this.bannerUrl); // Use the variable from the controller
+        model.addAttribute("specialThanks", savedThanks); // This makes it show up in the HTML
         
-        // Check if there's a saved "thanks" in session or elsewhere, 
-        // otherwise it uses the default in your HTML
         return "developers";
     }
 

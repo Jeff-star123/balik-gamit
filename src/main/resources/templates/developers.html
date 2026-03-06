@@ -191,11 +191,9 @@
 
     <script>
         function openDevModal(index) {
-            // Get the card element
             const card = document.getElementById('dev-card-' + index);
-            
-            // Extract data from attributes
             document.getElementById('editId').value = card.getAttribute('data-id');
+            document.getElementById('devIndex').value = index; 
             document.getElementById('editName').value = card.getAttribute('data-name');
             document.getElementById('editContrib').value = card.getAttribute('data-contrib');
             document.getElementById('editSection').value = card.getAttribute('data-section');
@@ -208,13 +206,12 @@
         }
 
         function openBannerModal() {
-            document.getElementById('editId').value = ""; // Clear the ID
-            document.getElementById('modalTitle').innerText = "Edit Banner";
+            document.getElementById('editId').value = "";
+            document.getElementById('devIndex').value = "-1"; // Set index to -1 for Banner
             document.getElementById('modalTitle').innerText = "Edit Banner";
             document.getElementById('devGroup').style.display = 'block'; 
             document.getElementById('thanksGroup').style.display = 'none';
             toggleInputs(false);
-            // Hide text fields for banner mode
             document.getElementById('editName').style.display = 'none';
             document.getElementById('editContrib').style.display = 'none';
             document.getElementById('editSection').style.display = 'none';
@@ -222,8 +219,8 @@
         }
 
         function openMessageModal() {
-            document.getElementById('editId').value = ""; // Clear the ID
-            document.getElementById('modalTitle').innerText = "Edit Special Thanks";
+            document.getElementById('editId').value = "";
+            document.getElementById('devIndex').value = "-2"; // Set index to -2 for Special Thanks
             document.getElementById('modalTitle').innerText = "Edit Special Thanks";
             document.getElementById('devGroup').style.display = 'none';
             document.getElementById('thanksGroup').style.display = 'block';
@@ -234,18 +231,25 @@
         }
 
         function toggleInputs(isThanksMode) {
+            // Enable/Disable inputs so the correct data is sent
             document.getElementById('editName').disabled = isThanksMode;
             document.getElementById('editContrib').disabled = isThanksMode;
             document.getElementById('editSection').disabled = isThanksMode;
             document.getElementById('editThanksText').disabled = !isThanksMode;
-            // Reset visibility
+            
+            // Toggle visibility
             document.getElementById('editName').style.display = isThanksMode ? 'none' : 'block';
             document.getElementById('editContrib').style.display = isThanksMode ? 'none' : 'block';
             document.getElementById('editSection').style.display = isThanksMode ? 'none' : 'block';
         }
 
-        function closeModal() { document.getElementById('editModal').style.display = 'none'; }
-        window.onclick = function(event) { if (event.target == document.getElementById('editModal')) closeModal(); }
+        function closeModal() { 
+            document.getElementById('editModal').style.display = 'none'; 
+        }
+        
+        window.onclick = function(event) { 
+            if (event.target == document.getElementById('editModal')) closeModal(); 
+        }
     </script>
 </body>
 </html>
