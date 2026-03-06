@@ -40,6 +40,34 @@
             transform: translateY(-2px);
         }
 
+        /* 1. Reset browser defaults */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 2. Ensure the Body doesn't center its children */
+        body {
+            display: flex;
+            flex-direction: row; /* Force side-by-side layout */
+            align-items: stretch;
+            justify-content: flex-start; /* Force everything to the left */
+            text-align: left;
+        }
+
+        /* 3. Explicit Sidebar Positioning */
+        .sidebar {
+            width: 250px;
+            min-width: 250px;
+            height: 100vh;
+            position: sticky; /* Or fixed */
+            top: 0;
+            left: 0;
+            /* Ensure it doesn't shrink */
+            flex-shrink: 0; 
+        }
+
         :root {
             --glass: rgba(255, 255, 255, 0.15);
             --glass-heavy: rgba(255, 255, 255, 0.95);
