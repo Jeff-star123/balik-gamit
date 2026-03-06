@@ -25,6 +25,9 @@ public class ItemController {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private DeveloperRepository devRepo;
+
     // Use the Resend service instead of JavaMailSender
     @Autowired
     private com.bsit.lostandfound.service.OtpService otpService;
@@ -46,6 +49,14 @@ public class ItemController {
             for (int i = 0; i < 5; i++) {
                 developerList.add(new Developer("Dev Name " + (i+1), "Contributions", "Section", "/images/default-avatar.png"));
             }
+        }
+        if (devRepo.count() == 0) {
+            // Standard 5 developers
+            for (int i = 1; i <= 5; i++) {
+                devRepo.save(new Developer("Dev Name " + i, "Developer Role", "BSIT-3A", "/images/default-avatar.png"));
+            }
+            // The Lead/Main Developer (The bigger one)
+            devRepo.save(new Developer("Lead Developer Name", "Project Lead & System Architect", "LEAD", "/images/lead-avatar.png"));
         }
     }
 
@@ -122,7 +133,9 @@ public class ItemController {
         Student user = (Student) session.getAttribute("loggedInStudent");
         boolean isAdmin = (user != null && user.isIsAdmin()); 
         
-        model.addAttribute("developers", developerList);
+        // CHANGE: Fetch from the database repository instead of the static list
+        model.addAttribute("developers", devRepo.findAll());
+        
         model.addAttribute("bannerUrl", bannerUrl);
         model.addAttribute("isAdmin", isAdmin);
         return "developers";
@@ -153,6 +166,13 @@ public class ItemController {
             if (fileName != null) dev.setPhotoUrl("/uploads/" + fileName);
         }
         return "redirect:/developers?success=true";
+    }
+
+    @PostMapping("/developers/edit")
+    public String editDeveloper(@ModelAttribute Developer dev) {
+        // This saves the changes (including the new photo URL) to the database
+        devRepo.save(dev); 
+        return "redirect:/developers";
     }
 
     // --- SETTINGS LOGIC ---

@@ -240,7 +240,10 @@ A special note of thanks to Sir Arjet Ragub Millan. Thank you, Sir, for your inv
         </aside>
 
         <section class="dev-column">
-            <div th:each="dev, iterStat : ${developers}" class="dev-card-big">
+            <div th:each="dev, iterStat : ${developers}" 
+                class="dev-card-big" 
+                th:classappend="${iterStat.last} ? 'featured-dev' : ''">
+                
                 <div class="dev-img-box">
                     <img th:src="${dev.photoUrl}" class="dev-img">
                     <button th:if="${isAdmin}" class="edit-btn card-edit" 

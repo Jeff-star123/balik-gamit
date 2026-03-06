@@ -331,4 +331,34 @@ input, select, textarea {
         width: 90% !important;
         padding: 20px;
     }
+    /* This targets ONLY the last developer added to the section */
+.featured-dev {
+    grid-column: 1 / -1; /* Spans across the entire width */
+    width: 100%;
+    max-width: 800px;    /* Makes it wider than the others */
+    margin: 30px auto;   /* Centers it at the bottom */
+    transform: scale(1.05); /* Slightly bigger than others */
+    border: 2px solid #23a6d5; /* Optional: adds a "Lead" glow */
+    background: var(--glass-heavy);
+    display: flex !important; /* Changes layout to horizontal for the big one */
+    flex-direction: row;
+    align-items: center;
+    gap: 40px;
+    padding: 40px !important;
+}
+
+/* Adjust the image size for the featured dev */
+.featured-dev .dev-img {
+    width: 180px;
+    height: 180px;
+}
+
+/* Ensure it stacks vertically on mobile */
+@media (max-width: 768px) {
+    .featured-dev {
+        flex-direction: column;
+        text-align: center;
+        transform: scale(1);
+    }
+}
 }
