@@ -30,6 +30,8 @@ public class ItemController {
     @Autowired
     private JavaMailSender mailSender;
 
+    
+
     // FIELDS FOR DEVELOPERS
     private static List<Developer> developerList = new ArrayList<>();
     private String bannerUrl = "/images/default-banner.png";

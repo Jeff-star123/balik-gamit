@@ -7,6 +7,94 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+         /* --- ORIGINAL STYLES --- */
+        .post-panel h3 {
+            color: #1e272e !important;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: none;
+        }
+
+        .post-panel button[type="submit"] {
+            background: #00b894 !important;
+            color: white !important;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+        }
+
+        .post-panel button[type="submit"]:hover {
+            background: #00947a !important;
+            transform: translateY(-2px);
+        }
+
+        /* 1. Reset browser defaults */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 2. Ensure the Body doesn't center its children */
+        body {
+            display: flex;
+            flex-direction: row; /* Force side-by-side layout */
+            align-items: stretch;
+            justify-content: flex-start; /* Force everything to the left */
+            text-align: left;
+        }
+
+        /* 3. Explicit Sidebar Positioning */
+        .sidebar {
+            width: 250px;
+            min-width: 250px;
+            height: 100vh;
+            position: sticky; /* Or fixed */
+            top: 0;
+            left: 0;
+            /* Ensure it doesn't shrink */
+            flex-shrink: 0; 
+        }
+
+        :root {
+            --glass: rgba(255, 255, 255, 0.15);
+            --glass-heavy: rgba(255, 255, 255, 0.95);
+            --sidebar-width: 280px;
+            --text-main: #2d3436;
+            --text-sub: #636e72;
+            --card-border: rgba(255, 255, 255, 0.5);
+            --accent: #764ba2;
+            --found-green: #00b894;
+            --lost-red: #ff7675;
+        }
+
+        [data-theme="dark"] {
+            --glass: rgba(0, 0, 0, 0.3);
+            --glass-heavy: rgba(30, 30, 30, 0.95);
+            --text-main: #f5f6fa;
+            --text-sub: #b2bec3;
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            color: var(--text-main);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         /* --- FIGMA & DARK MODE THEMING --- */
         :root {
             --glass: rgba(255, 255, 255, 0.15);
