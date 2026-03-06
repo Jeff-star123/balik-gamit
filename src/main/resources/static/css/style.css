@@ -299,3 +299,36 @@ input, select, textarea {
     animation: spin 0.8s linear infinite;
     margin-right: 5px;
 }
+/* --- RESPONSIVE MOBILE OVERRIDES --- */
+@media (max-width: 768px) {
+    /* Stack the sidebar and main feed vertically */
+    .dashboard-container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    /* Make the navigation bar easier to tap */
+    .nav-bar {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    /* Shrink the Post Panel for mobile */
+    .post-panel {
+        width: 100% !important;
+        margin: 10px 0;
+    }
+
+    /* Adjust the Item Grid to show fewer columns */
+    .item-grid {
+        grid-template-columns: 1fr !important; /* One card per row on small phones */
+        gap: 15px;
+    }
+
+    /* Adjust Modal sizes (Login/Register cards) */
+    .login-card, .register-card {
+        width: 90% !important;
+        padding: 20px;
+    }
+}
