@@ -362,26 +362,60 @@ input, select, textarea {
     }
 }
 }
-.card-btn {
+/* --- UPDATED BUTTON GRID SECTION --- */
+
+/* 1. The container that holds all buttons */
+.action-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 10px;
+    margin-top: 15px;
     width: 100%;
-    border: none;
-    border-radius: 10px; /* Modern rounding */
-    padding: 12px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-    display: flex;
+}
+
+/* Container that handles both 2x2 and 2x1 layouts */
+.action-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
+}
+
+/* Base button style - reset all defaults */
+.card-btn {
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 12px 5px !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-bottom: 8px; /* Space between buttons */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    width: 100% !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.card-btn:active {
-    transform: scale(0.98);
+/* Hover Effects */
+.card-btn:hover {
+    filter: brightness(92%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.btn-fb { background-color: #1877F2; color: white; }
-.btn-msgr { background-color: #0084FF; color: white; }
-.btn-copy { background-color: #f0f2f5; color: #4b5563; }
+/* Colors */
+.btn-fb { background-color: #1877F2 !important; color: white !important; }
+.btn-msgr { background-color: #0084FF !important; color: white !important; }
+.btn-finish { background-color: #00BC94 !important; color: white !important; }
+.btn-delete { background-color: #FF7B7B !important; color: white !important; }
+
+/* The Copy Link button always stays full-width at the bottom */
+.btn-copy { 
+    background-color: #F0F2F5 !important; 
+    color: #4B5563 !important; 
+    grid-column: span 2; /* Force it to the bottom row, full width */
+    margin-top: 2px;
+}
