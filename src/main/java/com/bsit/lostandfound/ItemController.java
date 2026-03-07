@@ -72,7 +72,6 @@ public class ItemController {
         }
     }
 
-
     @GetMapping("/check-id")
     @ResponseBody
     public boolean checkId(@RequestParam String studentId) {

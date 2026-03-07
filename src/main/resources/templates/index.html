@@ -456,6 +456,13 @@
                     <p style="font-size: 0.85rem;">
                         <strong> Facebook link:</strong> 
                         <span class="linkify-contact" th:text="${item.contactInfo}"></span>
+                    <!-- Displaying the Poster's Name and Time Ago -->
+                    <p class="text-muted small mb-1">
+                        <strong>Posted by:</strong> <span th:text="${item.poster.name}">Student Name</span>
+                    </p>
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-clock"></i> <span th:text="${item.getFormattedDate()}">Just now</span>
+                    </p>
                     </p>
                     
                     <button class="btn-fb-share" th:onclick="'shareOnFacebook(\'https://yourdomain.com/item/' + ${item.id} + '\')'">
