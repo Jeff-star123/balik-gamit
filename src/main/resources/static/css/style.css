@@ -3,6 +3,20 @@
     --sidebar-width: 260px;
     --primary-blue: #007bff;
     --dark-bg: #1c1e21;
+    /* ADD THESE FOR THE WIDGETS */
+    --glass-heavy: rgba(255, 255, 255, 0.8); 
+    --text-main: #2d3436;
+    --text-sub: #636e72;
+    --accent: #007bff;
+}
+
+.sidebar-widget {
+    background: var(--glass-heavy);
+    border-radius: 20px; /* Slightly smoother */
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
+    backdrop-filter: blur(4px); /* Adds that "Glass" feel */
 }
 
 /* Updated Sidebar Styling */
@@ -93,6 +107,27 @@
     width: calc(100% - var(--sidebar-width));
     min-height: 100vh;
     box-sizing: border-box;
+
+    /* ADD THESE LINES */
+    display: flex;
+    gap: 30px; /* Space between the feed and the right widgets */
+    align-items: flex-start; /* Prevents widgets from stretching to footer height */
+}
+
+/* The Feed (Left side of the main content) */
+.feed-section {
+    flex: 1; /* Takes up all remaining space */
+    min-width: 0; /* Prevents grid blowout */
+}
+
+.right-sidebar {
+    width: 320px; /* Fixed width for your widgets */
+    flex-shrink: 0; /* Prevents it from getting squished */
+    position: sticky; /* Optional: keeps widgets visible as you scroll the feed */
+    top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 /* 2. SLIDING POST PANEL */

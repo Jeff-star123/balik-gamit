@@ -43,31 +43,27 @@
             transform: translateY(-2px);
         }
 
-        /* 1. Reset browser defaults */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* 2. Ensure the Body doesn't center its children */
         body {
             display: flex;
-            flex-direction: row; /* Force side-by-side layout */
+            flex-direction: row; 
             align-items: stretch;
-            justify-content: flex-start; /* Force everything to the left */
+            justify-content: flex-start; 
             text-align: left;
         }
 
-        /* 3. Explicit Sidebar Positioning */
         .sidebar {
             width: 250px;
             min-width: 250px;
             height: 100vh;
-            position: sticky; /* Or fixed */
+            position: sticky; 
             top: 0;
             left: 0;
-            /* Ensure it doesn't shrink */
             flex-shrink: 0; 
         }
 
@@ -242,27 +238,26 @@
             border-radius: 30px;
         }
 
-        /* --- SHARE BUTTON STYLE --- */
-        .btn-fb-share {
-            margin-top: 15px;
-            width: 100%;
-            padding: 10px;
-            background: var(--fb-blue);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
+        /* --- ACTION BUTTONS --- */
+        .card-btn {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: 0.3s;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-bottom: 5px;
         }
-        .btn-fb-share:hover {
-            background: #166fe5;
-            transform: scale(1.02);
-        }
+        .btn-fb { background: #1877F2; color: white; }
+        .btn-msgr { background: #0084FF; color: white; }
+        .btn-copy { background: #6c757d; color: white; }
+        .card-btn:hover { opacity: 0.9; transform: scale(1.02); }
 
         /* --- FIGMA CENTRAL NOTIFICATION STYLES --- */
         #central-notif-overlay {
@@ -291,56 +286,26 @@
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .figma-modal.active {
-            transform: scale(1);
-            opacity: 1;
-        }
+        .figma-modal.active { transform: scale(1); opacity: 1; }
 
         .modal-icon-container {
-            width: 100px;
-            height: 100px;
+            width: 100px; height: 100px;
             background: linear-gradient(135deg, #23d5ab, #23a6d5);
             color: white;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            margin: 0 auto 25px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; margin: 0 auto 25px;
             box-shadow: 0 15px 35px rgba(35, 213, 171, 0.4);
         }
 
-        .modal-content h2 {
-            margin: 0 0 10px 0;
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #1e272e;
-        }
-
-        .modal-content p {
-            margin: 0 0 30px 0;
-            color: #636e72;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
+        .modal-content h2 { margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 800; color: #1e272e; }
+        .modal-content p { margin: 0 0 30px 0; color: #636e72; font-size: 1rem; line-height: 1.5; }
 
         .modal-btn {
-            width: 100%;
-            padding: 16px;
-            background: #1e272e;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
+            width: 100%; padding: 16px; background: #1e272e; color: white; border: none;
+            border-radius: 20px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s;
         }
-
-        .modal-btn:hover {
-            background: #000;
-            transform: translateY(-2px);
-        }
+        .modal-btn:hover { background: #000; transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -376,119 +341,190 @@
     </nav>
 
     <main class="dashboard-container">
-    <div class="dashboard-wrapper" style="display: flex; gap: 30px; align-items: flex-start;">
+    <div class="dashboard-wrapper" style="display: flex; gap: 40px; align-items: flex-start;">
         
         <!-- LEFT/CENTER: Feed & Widgets -->
         <div class="feed-section" style="flex: 1; min-width: 0;">
+
+        <div class="top-bar">
+            <h1 style="color: white; font-weight: 800; margin: 0;">Active Feed</h1>
+            <div class="search-form">
+                <input type="text" id="liveSearch" oninput="liveFilter()" placeholder="Search for items..." 
+                    style="color: #1e272e !important; background: white !important;">
+                <button type="button" class="search-btn">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ANALYTICS WIDGETS -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <span class="stat-value" th:text="${totalFound}">0</span>
+                <span class="stat-label">Items Found</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" th:text="${activeLost}">0</span>
+                <span class="stat-label">Active Lost</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" th:text="${totalUsers}">0</span>
+                <span class="stat-label">Members</span>
+            </div>
+        </div>
+
+        <div id="postFoundPanel" class="post-panel">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h3>Report a Found Item</h3>
+                <button onclick="togglePanel('postFoundPanel')" style="border:none; background:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <form th:action="@{/report}" method="post" enctype="multipart/form-data" class="report-form" onsubmit="showCentralNotif('Submitting...', 'Uploading your found item report.');">
+                <input type="text" name="itemName" placeholder="Item Name" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <select name="category" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px;">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Electronics">📱 Electronics</option>
+                    <option value="ID/Documents">🪪 IDs / Documents</option>
+                    <option value="Keys">🔑 Keys</option>
+                    <option value="Wallets/Bags">💼 Wallets & Bags</option>
+                    <option value="Others">📦 Others</option>
+                </select>
+                <input type="text" name="description" placeholder="Description..." required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="text" name="contactInfo" placeholder="Facebook Profile Link" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="file" name="imageFile" accept="image/*" style="margin-bottom:15px;">
+                <button type="submit">Post Found Item</button>
+            </form>
+        </div>
+
+        <div id="postLostPanel" class="post-panel">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h3>Report a Lost Item</h3>
+                <button onclick="togglePanel('postLostPanel')" style="border:none; background:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <form th:action="@{/report-lost}" method="post" enctype="multipart/form-data" class="report-form" onsubmit="showCentralNotif('Submitting...', 'Uploading your lost item report.');">
+                <input type="text" name="itemName" placeholder="Item Name" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <select name="category" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px;">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Electronics">📱 Electronics</option>
+                    <option value="ID/Documents">🪪 IDs / Documents</option>
+                    <option value="Others">📦 Others</option>
+                </select>
+                <input type="text" name="description" placeholder="Where did you last see it?" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="text" name="contactInfo" placeholder="Contact Info" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="file" name="imageFile" accept="image/*" style="margin-bottom:15px;">
+                <button type="submit">Post Lost Report</button>
+            </form>
+        </div>
+
+        <!-- FEED FILTER TABS -->
+        <div class="feed-header-tabs">
+            <span style="color:white; font-weight:600;">Filter Feed:</span>
+            <div class="tab-controls">
+                <button class="tab-btn active" onclick="filterByStatus('ALL', event)">All Items</button>
+                <button class="tab-btn missing-tab" onclick="filterByStatus('LOST', event)">❌ Lost</button>
+                <button class="tab-btn found-tab" onclick="filterByStatus('FOUND', event)">✅ Found</button>
+            </div>
+        </div>
+
+        <div class="item-grid" id="activeFeed">
+            <div th:if="${#lists.isEmpty(items)}" class="empty-state">
+                <i class="fa-solid fa-box-open" style="font-size: 4rem; color: #ccc; margin-bottom: 20px;"></i>
+                <h2>No items reported yet</h2>
+                <p>Be the first one to post a report!</p>
+            </div>
             
-            <!-- TOP BAR -->
-            <div class="top-bar">
-                <h1 style="color: white; font-weight: 800; margin: 0;">Active Feed</h1>
-                <div class="search-form">
-                    <input type="text" id="liveSearch" oninput="liveFilter()" placeholder="Search for items..." 
-                           style="color: #1e272e !important; background: white !important;">
-                    <button type="button" class="search-btn">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
+            <div th:each="item : ${items}" class="item-card" th:data-status="${item.status}">
+                <div class="image-container">
+                    <span th:class="${item.status == 'LOST' or item.status == 'MISSING' ? 'status-badge lost' : 'status-badge found'}" 
+                          th:text="${item.status}">Status</span>
+                    <img th:src="${item.imagePath != null ? item.imagePath : '/images/default.jpg'}" onclick="openLightbox(this)" style="cursor:zoom-in;">
                 </div>
-            </div>
-
-            <!-- ANALYTICS WIDGETS -->
-            <div class="stats-container">
-                <div class="stat-card">
-                    <span class="stat-value" th:text="${totalFound}">0</span>
-                    <span class="stat-label">Items Found</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-value" th:text="${activeLost}">0</span>
-                    <span class="stat-label">Active Lost</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-value" th:text="${totalUsers}">0</span>
-                    <span class="stat-label">Members</span>
-                </div>
-            </div>
-
-            <!-- POST PANELS (Hidden by default) -->
-            <div id="postFoundPanel" class="post-panel" style="display:none;">...</div>
-            <div id="postLostPanel" class="post-panel" style="display:none;">...</div>
-
-            <!-- FEED FILTER TABS -->
-            <div class="feed-header-tabs">
-                <span style="color:white; font-weight:600;">Filter Feed:</span>
-                <div class="tab-controls">
-                    <button class="tab-btn active" onclick="filterByStatus('ALL', event)">All Items</button>
-                    <button class="tab-btn missing-tab" onclick="filterByStatus('LOST', event)">❌ Lost</button>
-                    <button class="tab-btn found-tab" onclick="filterByStatus('FOUND', event)">✅ Found</button>
-                </div>
-            </div>
-
-            <!-- ITEM GRID -->
-            <div class="item-grid" id="activeFeed">
-                <!-- Empty State -->
-                <div th:if="${#lists.isEmpty(items)}" class="empty-state">
-                    <i class="fa-solid fa-box-open" style="font-size: 4rem; color: #ccc; margin-bottom: 20px;"></i>
-                    <h2>No items reported yet</h2>
-                </div>
-
-                <!-- Item Card Loop -->
-                <div th:each="item : ${items}" class="item-card" th:data-status="${item.status}">
-                    <div class="image-container">
-                        <span th:class="${item.status == 'LOST' or item.status == 'MISSING' ? 'status-badge lost' : 'status-badge found'}" 
-                              th:text="${item.status}">Status</span>
-                        <img th:src="${item.imagePath != null ? item.imagePath : '/images/default.jpg'}" onclick="openLightbox(this)">
-                    </div>
-                    <div class="card-content">
-                        <span class="category-tag" th:text="${item.category}">Category</span>
-                        <h3 th:text="${item.name}">Item Name</h3>
-                        <p class="item-description" th:text="${item.description}">Desc</p>
-                        
-                        <!-- Actions -->
-                        <div class="action-grid">
-                            <button class="card-btn btn-fb" th:onclick="'shareOnFacebook(...) '"><i class="fa-brands fa-facebook"></i></button>
-                            <button class="card-btn btn-msgr" th:onclick="'shareOnMessenger(...) '"><i class="fa-brands fa-facebook-messenger"></i></button>
-                            
-                            <th:block th:if="${session.loggedInStudent != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}">
-                                <form th:action="@{'/finish/' + ${item.id}}" method="post" style="display: contents;">
-                                    <button type="submit" class="card-btn btn-finish">Finish</button>
-                                </form>
-                            </th:block>
-                        </div>
-                    </div>
-                </div> <!-- END OF ITEM CARD LOOP -->
-            </div>
-        </div> <!-- END OF FEED SECTION -->
-
-        <!-- RIGHT SIDEBAR (Moved outside the loop) -->
-        <aside class="right-sidebar" style="width: 320px; flex-shrink: 0; position: sticky; top: 20px;">
-            <div class="sidebar-widget">
-                <h3><i class="fa-solid fa-circle-dot" style="color: #00BC94;"></i> Online Now</h3>
-                <div class="online-list">
-                    <div class="user-badge" th:each="user : ${onlineUsers}">
-                        <div class="avatar-wrapper">
-                            <img th:src="${user.profilePic != null ? user.profilePic : '/images/default-avatar.png'}" alt="Avatar">
-                            <div class="online-indicator"></div>
-                        </div>
-                        <span th:text="${user.name}">User Name</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sidebar-widget" style="margin-top: 20px;">
-                <h3><i class="fa-solid fa-bolt"></i> Recent Activity</h3>
-                <div class="activity-feed">
-                    <div class="activity-item" th:each="activity : ${recentActivities}">
-                        <p><strong th:text="${activity.user}">Juan</strong> <span th:text="${activity.action}">found a</span> <strong th:text="${activity.item}">Blue Wallet</strong></p>
-                        <span th:text="${activity.timeAgo}">2m ago</span>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-    </div> <!-- END OF DASHBOARD WRAPPER -->
-</main>
-
+                <div class="card-content">
+                    <span class="category-tag" th:text="${item.category}">Category</span>
+                    <h3 th:text="${item.name}" style="margin: 5px 0 10px 0;">Item Name</h3>
                     
+                    <!-- NEW: POSTER AND TIME (NULL SAFE) -->
+                    <div class="meta-info" style="font-size: 0.8rem; color: #636e72; margin-bottom: 12px;">
+                        <span th:if="${item.poster != null}">
+                           <i class="fa-solid fa-user"></i> Posted by: <strong th:text="${item.poster.name}">User</strong>
+                        </span>
+                        <span th:if="${item.poster == null}">
+                           <i class="fa-solid fa-user"></i> Posted by: <strong>Anonymous</strong>
+                        </span>
+                        <br>
+                        <i class="fa-solid fa-clock"></i> <span th:text="${item.getFormattedDate != null ? item.getFormattedDate() : 'Just now'}">Time</span>
+                    </div>
+
+                    <p class="item-description" th:text="${item.description}" style="font-size: 0.9rem; color: #555; margin-bottom: 15px;">Desc</p>
+                    
+                    <div style="font-size: 0.85rem; margin-bottom: 15px; padding: 10px; background: rgba(0,0,0,0.03); border-radius: 8px;">
+                        <strong><i class="fa-solid fa-link"></i> Contact Info:</strong><br>
+                        <span class="linkify-contact" th:text="${item.contactInfo}"></span>
+                    </div>
+                    
+                    <!-- NEW: SOCIAL SHARE GROUP -->
+                    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 5px;">
+                        <div style="display: flex; gap: 5px;">
+                            <button class="card-btn btn-fb" style="flex: 1;" 
+                                    th:onclick="'shareOnFacebook(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'">
+                                <i class="fa-brands fa-facebook"></i>
+                            </button>
+                            <button class="card-btn btn-msgr" style="flex: 1;" 
+                                    th:onclick="'shareOnMessenger(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'">
+                                <i class="fa-brands fa-facebook-messenger"></i>
+                            </button>
+                            <button class="card-btn btn-copy" style="flex: 1;" 
+                                    th:onclick="'copyItemLink(' + ${item.id} + ')'">
+                                <i class="fa-solid fa-link"></i>
+                            </button>
+                        </div>
+
+                        <!-- NEW: MANAGEMENT (NULL SAFE) -->
+                        <div th:if="${session.loggedInStudent != null and item.poster != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}" 
+                             style="display: flex; gap: 5px; margin-top: 5px;">
+                            
+                            <form th:action="@{'/finish/' + ${item.id}}" method="post" style="flex:1;">
+                                <button type="submit" class="card-btn" style="background-color: #00BC94; color: white;" onclick="return confirm('Mark as finished?')">Finish</button>
+                            </form>
+                            
+                            <form th:action="@{'/delete/' + ${item.id}}" method="post" style="flex:1;">
+                                <button type="submit" class="card-btn" style="background-color: #FF7B7B; color: white;" onclick="return confirm('Delete forever?')">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR: Social & Activity -->
+            <aside class="right-sidebar" style="width: 320px; flex-shrink: 0;">
+                <!-- Online Users -->
+                <div class="sidebar-widget">
+                    <h3><i class="fa-solid fa-circle-dot" style="color: #00BC94;"></i> Online Now</h3>
+                    <div class="online-list">
+                        <div class="user-badge" th:each="user : ${onlineUsers}">
+                            <div class="avatar-wrapper">
+                                <img th:src="${user.profilePic != null ? user.profilePic : '/images/default-avatar.png'}" alt="Avatar">
+                                <div class="online-indicator"></div>
+                            </div>
+                            <span th:text="${user.name}">User Name</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Mini-Feed -->
+                <div class="sidebar-widget" style="margin-top: 20px;">
+                    <h3><i class="fa-solid fa-bolt"></i> Recent Activity</h3>
+                    <div class="activity-feed">
+                        <div class="activity-item" th:each="activity : ${recentActivities}">
+                            <p><strong th:text="${activity.user}">Juan</strong> <span th:text="${activity.action}">found a</span> <strong th:text="${activity.item}">Blue Wallet</strong></p>
+                            <span th:text="${activity.timeAgo}">2m ago</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
 
     <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center;">
         <span onclick="closeLightbox()" style="position:absolute; top:20px; right:30px; color:white; font-size:40px; cursor:pointer;">&times;</span>
@@ -496,13 +532,11 @@
     </div>
 
     <script>
-        // --- CENTRAL NOTIFICATION FUNCTIONS ---
         function showCentralNotif(title, message) {
             const overlay = document.getElementById('central-notif-overlay');
             const modal = document.getElementById('central-modal');
             document.getElementById('notif-title').innerText = title;
             document.getElementById('notif-message').innerText = message;
-
             overlay.style.display = 'flex';
             setTimeout(() => { modal.classList.add('active'); }, 10);
         }
@@ -510,61 +544,31 @@
         function closeCentralNotif() {
             const modal = document.getElementById('central-modal');
             modal.classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('central-notif-overlay').style.display = 'none';
-            }, 400);
+            setTimeout(() => { document.getElementById('central-notif-overlay').style.display = 'none'; }, 400);
         }
 
-        // --- FACEBOOK SHARE FUNCTION ---
         function shareOnFacebook(postUrl) {
             const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
             window.open(facebookUrl, 'facebook-share-dialog', 'width=626,height=436');
         }
 
         function shareOnMessenger(url) {
-            // Official Facebook Send Dialog
-            window.open(
-                'https://www.facebook.com/dialog/send?app_id=YOUR_FB_APP_ID&link=' + 
-                encodeURIComponent(url) + 
-                '&redirect_uri=' + encodeURIComponent(url),
-                'messenger-share-dialog',
-                'width=626,height=436'
-            );
+            window.open('https://www.facebook.com/dialog/send?app_id=YOUR_FB_APP_ID&link=' + encodeURIComponent(url) + '&redirect_uri=' + encodeURIComponent(url), 'messenger-share-dialog', 'width=626,height=436');
         }
 
         function copyItemLink(id) {
             const url = 'https://balik-gamit-production.up.railway.app/item/' + id;
-            
             navigator.clipboard.writeText(url).then(() => {
-                // Figma-style Toast Notification
                 const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
+                    toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, timerProgressBar: true
                 });
-
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Link copied to clipboard!',
-                    background: '#ffffff',
-                    color: '#333',
-                    iconColor: '#00BC94' // Matching your "Finish" button color
-                });
+                Toast.fire({ icon: 'success', title: 'Link copied!', background: '#ffffff', color: '#333', iconColor: '#00BC94' });
             });
         }
 
-        // --- ORIGINAL DASHBOARD FUNCTIONS ---
         function togglePanel(panelId) {
             const panels = ['postFoundPanel', 'postLostPanel'];
-            panels.forEach(id => {
-                if (id !== panelId) document.getElementById(id).style.display = 'none';
-            });
+            panels.forEach(id => { if (id !== panelId) document.getElementById(id).style.display = 'none'; });
             const panel = document.getElementById(panelId);
             panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
         }
@@ -572,15 +576,10 @@
         function filterByStatus(status, event) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.currentTarget.classList.add('active');
-            
             const cards = document.querySelectorAll('#activeFeed .item-card');
             cards.forEach(card => {
                 const itemStatus = card.getAttribute('data-status');
-                if (status === 'ALL' || itemStatus === status) {
-                    card.style.display = "block";
-                } else {
-                    card.style.display = "none";
-                }
+                card.style.display = (status === 'ALL' || itemStatus === status) ? "flex" : "none";
             });
         }
 
@@ -588,9 +587,7 @@
             document.getElementById("imageModal").style.display = "flex";
             document.getElementById("imgFull").src = el.src;
         }
-        function closeLightbox() {
-            document.getElementById("imageModal").style.display = "none";
-        }
+        function closeLightbox() { document.getElementById("imageModal").style.display = "none"; }
 
         function liveFilter() {
             const query = document.getElementById("liveSearch").value.toLowerCase();
@@ -598,31 +595,23 @@
             cards.forEach(card => {
                 const name = card.querySelector('h3').textContent.toLowerCase();
                 const desc = card.querySelector('.item-description').textContent.toLowerCase();
-                if (name.includes(query) || desc.includes(query)) {
-                    card.style.display = "block";
-                } else {
-                    card.style.display = "none";
-                }
+                card.style.display = (name.includes(query) || desc.includes(query)) ? "flex" : "none";
             });
         }
-    </script>
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const contactFields = document.querySelectorAll('.linkify-contact');
-        contactFields.forEach(field => {
-            const originalText = field.innerText.trim();
-            const urlPattern = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-            if (urlPattern.test(originalText)) {
-                field.innerHTML = originalText.replace(urlPattern, function(url) {
-                    let href = url;
-                    if (!href.match(/^https?:\/\//)) {
-                        href = 'http://' + href;
-                    }
-                    return `<a href="${href}" target="_blank" style="color: #23a6d5; text-decoration: underline; font-weight: 600;">${url}</a>`;
-                });
-            }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const contactFields = document.querySelectorAll('.linkify-contact');
+            contactFields.forEach(field => {
+                const originalText = field.innerText.trim();
+                const urlPattern = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+                if (urlPattern.test(originalText)) {
+                    field.innerHTML = originalText.replace(urlPattern, function(url) {
+                        let href = url.startsWith('www.') ? 'http://' + url : url;
+                        return `<a href="${href}" target="_blank" style="color: #23a6d5; text-decoration: underline; font-weight: 600;">${url}</a>`;
+                    });
+                }
+            });
         });
-    });
     </script>
 </body>
 </html>
