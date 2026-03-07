@@ -8,6 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.bsit.lostandfound.service.CloudinaryService;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -30,6 +33,9 @@ public class ItemController {
     @Autowired
     private DeveloperRepository devRepo;
 
+    @Autowired 
+    private CloudinaryService cloudinaryService;
+
     // Use the Resend service instead of JavaMailSender
     @Autowired
     private com.bsit.lostandfound.service.OtpService otpService;
@@ -41,7 +47,7 @@ public class ItemController {
     // FIELDS FOR DEVELOPERS
     private static List<Developer> developerList = new ArrayList<>();
     private String bannerUrl = "/images/default-banner.png";
-    private final String UPLOAD_DIR = System.getProperty("user.dir") + "/src/main/resources/static/uploads/";
+
 
     // SINGLE MERGED INIT METHOD
     @EventListener(ContextRefreshedEvent.class)
@@ -66,15 +72,6 @@ public class ItemController {
         }
     }
 
-    // --- HELPER METHODS ---
-    private String handleFileUpload(MultipartFile file) throws IOException {
-        if (file.isEmpty()) return "default.jpg";
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path path = Paths.get(UPLOAD_DIR + fileName);
-        Files.createDirectories(path.getParent());
-        Files.write(path, file.getBytes());
-        return fileName;
-    }
 
     @GetMapping("/check-id")
     @ResponseBody
@@ -166,9 +163,9 @@ public class ItemController {
         Student user = (Student) session.getAttribute("loggedInStudent");
         if (user == null || !user.isIsAdmin()) return "redirect:/login";
 
-        // 2. Handle Banner Update (devIndex -1 is your Banner)
+        // 2. Handle Banner Update
         if (devIndex != null && devIndex == -1 && photo != null && !photo.isEmpty()) {
-            this.bannerUrl = "/uploads/" + handleFileUpload(photo);
+            this.bannerUrl = cloudinaryService.uploadImage(photo); // NEW: Full URL
         }
 
         // 3. Handle Special Thanks Update (devIndex -2 is your Thanks)
@@ -182,19 +179,15 @@ public class ItemController {
         if (id != null) {
             Developer dev = devRepo.findById(id).orElse(null);
             if (dev != null) {
-                dev.setName(name);
-                dev.setContributions(contributions);
-                dev.setSection(section);
+                // ... (setting name, etc)
                 
-                // Save photo if uploaded
                 if (photo != null && !photo.isEmpty()) {
-                    String fileName = handleFileUpload(photo);
-                    dev.setPhotoUrl("/uploads/" + fileName);
+                    String imageUrl = cloudinaryService.uploadImage(photo); // NEW: Full URL
+                    dev.setPhotoUrl(imageUrl); // NEW: Save full URL
                 }
-                
                 devRepo.save(dev); 
             }
-        } 
+        }
 
         return "redirect:/developers";
     }
@@ -356,8 +349,8 @@ public class ItemController {
                                   @RequestParam("imageFile") MultipartFile file, HttpSession session) throws IOException {
         Student loggedIn = (Student) session.getAttribute("loggedInStudent");
         if (loggedIn == null) return "redirect:/login";
-        String fileName = handleFileUpload(file);
-        LostItem item = new LostItem(itemName, description, "/uploads/" + fileName, contactInfo, category, loggedIn);
+        String imageUrl = cloudinaryService.uploadImage(file); // Uses Cloudinary
+        LostItem item = new LostItem(itemName, description, imageUrl, contactInfo, category, loggedIn);
         item.setStatus("FOUND"); 
         repository.save(item);
         return "redirect:/";
@@ -369,8 +362,8 @@ public class ItemController {
                                  @RequestParam("imageFile") MultipartFile file, HttpSession session) throws IOException {
         Student loggedIn = (Student) session.getAttribute("loggedInStudent");
         if (loggedIn == null) return "redirect:/login";
-        String fileName = handleFileUpload(file);
-        LostItem item = new LostItem(itemName, description, "/uploads/" + fileName, contactInfo, category, loggedIn);
+        String imageUrl = cloudinaryService.uploadImage(file); // Uses Cloudinary
+        LostItem item = new LostItem(itemName, description, imageUrl, contactInfo, category, loggedIn);
         item.setStatus("LOST"); 
         repository.save(item);
         return "redirect:/";
