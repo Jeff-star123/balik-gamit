@@ -6,7 +6,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <!-- SweetAlert2 for modern Toasts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         (function() {
             const savedTheme = localStorage.getItem('theme');
@@ -465,43 +467,41 @@
                     </p>
                     </p>
                     
-                    <!-- Social Share Group -->
-                    <div class="d-grid gap-2 mb-3">
-                        <!-- Facebook Share -->
-                        <button class="btn btn-primary btn-sm rounded-3 py-2" 
-                                th:onclick="'shareOnFacebook(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'"
-                                style="background-color: #1877F2; border: none;">
-                            <i class="fa-brands fa-facebook me-1"></i> Share to Facebook
-                        </button>
+                    <!-- Share to Facebook (Primary Brand Blue) -->
+                    <button class="btn btn-primary w-100 py-2 rounded-3 fw-bold border-0 shadow-sm" 
+                            th:onclick="'shareOnFacebook(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'"
+                            style="background-color: #1877F2;">
+                        <i class="fa-brands fa-facebook me-2"></i> Share to Facebook
+                    </button>
 
-                        <!-- Messenger Share -->
-                        <button class="btn btn-info btn-sm rounded-3 py-2 text-white" 
-                                th:onclick="'shareOnMessenger(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'"
-                                style="background-color: #00B2FF; border: none;">
-                            <i class="fa-brands fa-facebook-messenger me-1"></i> Messenger
-                        </button>
+                    <!-- Messenger (Modern Blue) -->
+                    <button class="btn btn-info w-100 py-2 rounded-3 fw-bold border-0 text-white shadow-sm" 
+                            th:onclick="'shareOnMessenger(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'"
+                            style="background-color: #0084FF;">
+                        <i class="fa-brands fa-facebook-messenger me-2"></i> Messenger
+                    </button>
 
-                        <!-- Copy Link -->
-                        <button class="btn btn-light btn-sm rounded-3 py-1 border" 
-                                th:onclick="'copyItemLink(' + ${item.id} + ')'"
-                                style="background: #e9ecef; font-size: 0.85rem;">
-                            <i class="fa-solid fa-link me-1"></i> Copy Link
-                        </button>
-                    </div>
+                    <!-- Copy Link (Clean Light Neutral) -->
+                    <button class="btn btn-light w-100 py-2 rounded-3 fw-bold border-0 shadow-sm" 
+                            th:onclick="'copyItemLink(' + ${item.id} + ')'"
+                            style="background-color: #F0F2F5; color: #4B5563;">
+                        <i class="fa-solid fa-link me-2"></i> Copy Link
+                    </button>
 
-                    <!-- Action Buttons -->
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-success flex-grow-1 py-2 rounded-3" style="background-color: #00BC94; border: none;">Finish</button>
-                        <button class="btn btn-danger flex-grow-1 py-2 rounded-3" style="background-color: #FF7B7B; border: none;">Delete</button>
-                    </div>
-
+                    <!-- Action Row (Only visible to owner/admin) -->
                     <div th:if="${session.loggedInStudent != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}" 
-                         style="margin-top:15px; display:flex; gap:10px;">
-                        <form th:action="@{'/finish/' + ${item.id}}" method="post" style="flex:1;" onsubmit="showCentralNotif('Verified!', 'Item successfully marked as finished.');">
-                            <button type="submit" class="btn-action-finish" style="width:100%; padding:10px; background:var(--found-green); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="return confirm('Finish this post?')">Finish</button>
+                        class="d-flex gap-2 mt-2">
+                        
+                        <form th:action="@{'/finish/' + ${item.id}}" method="post" class="flex-grow-1">
+                            <button type="submit" class="w-100 py-2 rounded-3 fw-bold border-0 text-white shadow-sm" 
+                                    style="background-color: #00BC94;" 
+                                    onclick="return confirm('Finish this post?')">Finish</button>
                         </form>
-                        <form th:action="@{'/delete/' + ${item.id}}" method="post" style="flex:1;">
-                            <button type="submit" class="btn-action-delete" style="width:100%; padding:10px; background:var(--lost-red); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="return confirm('Delete forever?')">Delete</button>
+
+                        <form th:action="@{'/delete/' + ${item.id}}" method="post" class="flex-grow-1">
+                            <button type="submit" class="w-100 py-2 rounded-3 fw-bold border-0 text-white shadow-sm" 
+                                    style="background-color: #FF7B7B;" 
+                                    onclick="return confirm('Delete forever?')">Delete</button>
                         </form>
                     </div>
                 </div>
@@ -553,8 +553,28 @@
 
         function copyItemLink(id) {
             const url = 'https://balik-gamit-production.up.railway.app/item/' + id;
+            
             navigator.clipboard.writeText(url).then(() => {
-                alert("Link copied! You can now paste it into Messenger.");
+                // Figma-style Toast Notification
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Link copied to clipboard!',
+                    background: '#ffffff',
+                    color: '#333',
+                    iconColor: '#00BC94' // Matching your "Finish" button color
+                });
             });
         }
 
