@@ -361,24 +361,27 @@ input, select, textarea {
         transform: scale(1);
     }
 }
-.share-btn {
-    background-color: #1877F2;
-    color: white;
+}
+.card-btn {
+    width: 100%;
     border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-family: 'Poppins', sans-serif;
+    border-radius: 10px; /* Modern rounding */
+    padding: 12px;
     font-weight: 600;
-    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 5px;
-    margin-top: 10px;
-    transition: 0.3s;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px; /* Space between buttons */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.share-btn:hover {
-    background-color: #166fe5;
-    transform: translateY(-2px);
+.card-btn:active {
+    transform: scale(0.98);
 }
-}
+
+.btn-fb { background-color: #1877F2; color: white; }
+.btn-msgr { background-color: #0084FF; color: white; }
+.btn-copy { background-color: #f0f2f5; color: #4b5563; }
