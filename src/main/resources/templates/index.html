@@ -376,132 +376,119 @@
     </nav>
 
     <main class="dashboard-container">
-        <div class="top-bar">
-            <h1 style="color: white; font-weight: 800; margin: 0;">Active Feed</h1>
-            <div class="search-form">
-                <input type="text" id="liveSearch" oninput="liveFilter()" placeholder="Search for items..." 
-                    style="color: #1e272e !important; background: white !important;">
-                <button type="button" class="search-btn">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
-        </div>
-
-        <div id="postFoundPanel" class="post-panel">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <h3>Report a Found Item</h3>
-                <button onclick="togglePanel('postFoundPanel')" style="border:none; background:none; font-size:1.5rem; cursor:pointer;">&times;</button>
-            </div>
-            <form th:action="@{/report}" method="post" enctype="multipart/form-data" class="report-form" onsubmit="showCentralNotif('Submitting...', 'Uploading your found item report.');">
-                <input type="text" name="itemName" placeholder="Item Name" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-                <select name="category" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px;">
-                    <option value="" disabled selected>Select Category</option>
-                    <option value="Electronics">📱 Electronics</option>
-                    <option value="ID/Documents">🪪 IDs / Documents</option>
-                    <option value="Keys">🔑 Keys</option>
-                    <option value="Wallets/Bags">💼 Wallets & Bags</option>
-                    <option value="Others">📦 Others</option>
-                </select>
-                <input type="text" name="description" placeholder="Description..." required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-                <input type="text" name="contactInfo" placeholder="Facebook Profile Link" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-                <input type="file" name="imageFile" accept="image/*" style="margin-bottom:15px;">
-                <button type="submit">Post Found Item</button>
-            </form>
-        </div>
-
-        <div id="postLostPanel" class="post-panel">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <h3>Report a Lost Item</h3>
-                <button onclick="togglePanel('postLostPanel')" style="border:none; background:none; font-size:1.5rem; cursor:pointer;">&times;</button>
-            </div>
-            <form th:action="@{/report-lost}" method="post" enctype="multipart/form-data" class="report-form" onsubmit="showCentralNotif('Submitting...', 'Uploading your lost item report.');">
-                <input type="text" name="itemName" placeholder="Item Name" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-                <select name="category" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px;">
-                    <option value="" disabled selected>Select Category</option>
-                    <option value="Electronics">📱 Electronics</option>
-                    <option value="ID/Documents">🪪 IDs / Documents</option>
-                    <option value="Others">📦 Others</option>
-                </select>
-                <input type="text" name="description" placeholder="Where did you last see it?" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-                <input type="text" name="contactInfo" placeholder="Contact Info" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-                <input type="file" name="imageFile" accept="image/*" style="margin-bottom:15px;">
-                <button type="submit">Post Lost Report</button>
-            </form>
-        </div>
-
-        <div class="feed-header-tabs">
-            <span style="color:white; font-weight:600;">Filter Feed:</span>
-            <div class="tab-controls">
-                <button class="tab-btn active" onclick="filterByStatus('ALL', event)">All Items</button>
-                <button class="tab-btn missing-tab" onclick="filterByStatus('LOST', event)">❌ Lost</button>
-                <button class="tab-btn found-tab" onclick="filterByStatus('FOUND', event)">✅ Found</button>
-            </div>
-        </div>
-
-        <div class="item-grid" id="activeFeed">
-            <div th:if="${#lists.isEmpty(items)}" class="empty-state">
-                <i class="fa-solid fa-box-open" style="font-size: 4rem; color: #ccc; margin-bottom: 20px;"></i>
-                <h2>No items reported yet</h2>
-                <p>Be the first one to post a report!</p>
-            </div>
-
-            <div th:each="item : ${items}" class="item-card" th:data-status="${item.status}">
-                <div class="image-container">
-                    <span th:class="${item.status == 'LOST' or item.status == 'MISSING' ? 'status-badge lost' : 'status-badge found'}" 
-                          th:text="${item.status}">Status</span>
-                    <img th:src="${item.imagePath != null ? item.imagePath : '/images/default.jpg'}" onclick="openLightbox(this)" style="cursor:zoom-in;">
+    <div class="dashboard-wrapper" style="display: flex; gap: 30px; align-items: flex-start;">
+        
+        <!-- LEFT/CENTER: Feed & Widgets -->
+        <div class="feed-section" style="flex: 1; min-width: 0;">
+            
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <h1 style="color: white; font-weight: 800; margin: 0;">Active Feed</h1>
+                <div class="search-form">
+                    <input type="text" id="liveSearch" oninput="liveFilter()" placeholder="Search for items..." 
+                           style="color: #1e272e !important; background: white !important;">
+                    <button type="button" class="search-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
                 </div>
-                <div class="card-content">
-                    <span class="category-tag" th:text="${item.category}">Category</span>
-                    <h3 th:text="${item.name}" style="margin: 5px 0 10px 0;">Item Name</h3>
-                    <p class="item-description" th:text="${item.description}" style="font-size: 0.9rem; color: #555;">Desc</p>
-                    <p style="font-size: 0.85rem;">
-                        <strong> Facebook link:</strong> 
-                        <span class="linkify-contact" th:text="${item.contactInfo}"></span>
-                    <!-- Displaying the Poster's Name and Time Ago -->
-                    <p class="text-muted small mb-1">
-                        <strong>Posted by:</strong> <span th:text="${item.poster.name}">Student Name</span>
-                    </p>
-                    <p class="text-muted small mb-3">
-                        <i class="bi bi-clock"></i> <span th:text="${item.getFormattedDate()}">Just now</span>
-                    </p>
-                    </p>
-                    
-                    <!-- Single Grid Container for all buttons -->
-                    <div class="action-grid">
+            </div>
+
+            <!-- ANALYTICS WIDGETS -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <span class="stat-value" th:text="${totalFound}">0</span>
+                    <span class="stat-label">Items Found</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" th:text="${activeLost}">0</span>
+                    <span class="stat-label">Active Lost</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" th:text="${totalUsers}">0</span>
+                    <span class="stat-label">Members</span>
+                </div>
+            </div>
+
+            <!-- POST PANELS (Hidden by default) -->
+            <div id="postFoundPanel" class="post-panel" style="display:none;">...</div>
+            <div id="postLostPanel" class="post-panel" style="display:none;">...</div>
+
+            <!-- FEED FILTER TABS -->
+            <div class="feed-header-tabs">
+                <span style="color:white; font-weight:600;">Filter Feed:</span>
+                <div class="tab-controls">
+                    <button class="tab-btn active" onclick="filterByStatus('ALL', event)">All Items</button>
+                    <button class="tab-btn missing-tab" onclick="filterByStatus('LOST', event)">❌ Lost</button>
+                    <button class="tab-btn found-tab" onclick="filterByStatus('FOUND', event)">✅ Found</button>
+                </div>
+            </div>
+
+            <!-- ITEM GRID -->
+            <div class="item-grid" id="activeFeed">
+                <!-- Empty State -->
+                <div th:if="${#lists.isEmpty(items)}" class="empty-state">
+                    <i class="fa-solid fa-box-open" style="font-size: 4rem; color: #ccc; margin-bottom: 20px;"></i>
+                    <h2>No items reported yet</h2>
+                </div>
+
+                <!-- Item Card Loop -->
+                <div th:each="item : ${items}" class="item-card" th:data-status="${item.status}">
+                    <div class="image-container">
+                        <span th:class="${item.status == 'LOST' or item.status == 'MISSING' ? 'status-badge lost' : 'status-badge found'}" 
+                              th:text="${item.status}">Status</span>
+                        <img th:src="${item.imagePath != null ? item.imagePath : '/images/default.jpg'}" onclick="openLightbox(this)">
+                    </div>
+                    <div class="card-content">
+                        <span class="category-tag" th:text="${item.category}">Category</span>
+                        <h3 th:text="${item.name}">Item Name</h3>
+                        <p class="item-description" th:text="${item.description}">Desc</p>
                         
-                        <!-- Row 1: Always Social -->
-                        <button class="card-btn btn-fb" 
-                                th:onclick="'shareOnFacebook(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'">
-                            <i class="fa-brands fa-facebook"></i> Facebook
-                        </button>
-
-                        <button class="card-btn btn-msgr" 
-                                th:onclick="'shareOnMessenger(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'">
-                            <i class="fa-brands fa-facebook-messenger"></i> Messenger
-                        </button>
-
-                        <!-- Row 2: Management (Only for Owner/Admin) -->
-                        <!-- 'display: contents' is the secret to keeping these in the grid -->
-                        <th:block th:if="${session.loggedInStudent != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}">
-                            <form th:action="@{'/finish/' + ${item.id}}" method="post" style="display: contents;">
-                                <button type="submit" class="card-btn btn-finish" onclick="return confirm('Finish this post?')">Finish</button>
-                            </form>
+                        <!-- Actions -->
+                        <div class="action-grid">
+                            <button class="card-btn btn-fb" th:onclick="'shareOnFacebook(...) '"><i class="fa-brands fa-facebook"></i></button>
+                            <button class="card-btn btn-msgr" th:onclick="'shareOnMessenger(...) '"><i class="fa-brands fa-facebook-messenger"></i></button>
                             
-                            <form th:action="@{'/delete/' + ${item.id}}" method="post" style="display: contents;">
-                                <button type="submit" class="card-btn btn-delete" onclick="return confirm('Delete forever?')">Delete</button>
-                            </form>
-                        </th:block>
+                            <th:block th:if="${session.loggedInStudent != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}">
+                                <form th:action="@{'/finish/' + ${item.id}}" method="post" style="display: contents;">
+                                    <button type="submit" class="card-btn btn-finish">Finish</button>
+                                </form>
+                            </th:block>
+                        </div>
+                    </div>
+                </div> <!-- END OF ITEM CARD LOOP -->
+            </div>
+        </div> <!-- END OF FEED SECTION -->
 
-                        <!-- Row 3: Always Copy Link at the bottom -->
-                        <button class="card-btn btn-copy" th:onclick="'copyItemLink(' + ${item.id} + ')'">
-                            <i class="fa-solid fa-link"></i> Copy Link
-                        </button>
+        <!-- RIGHT SIDEBAR (Moved outside the loop) -->
+        <aside class="right-sidebar" style="width: 320px; flex-shrink: 0; position: sticky; top: 20px;">
+            <div class="sidebar-widget">
+                <h3><i class="fa-solid fa-circle-dot" style="color: #00BC94;"></i> Online Now</h3>
+                <div class="online-list">
+                    <div class="user-badge" th:each="user : ${onlineUsers}">
+                        <div class="avatar-wrapper">
+                            <img th:src="${user.profilePic != null ? user.profilePic : '/images/default-avatar.png'}" alt="Avatar">
+                            <div class="online-indicator"></div>
+                        </div>
+                        <span th:text="${user.name}">User Name</span>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+
+            <div class="sidebar-widget" style="margin-top: 20px;">
+                <h3><i class="fa-solid fa-bolt"></i> Recent Activity</h3>
+                <div class="activity-feed">
+                    <div class="activity-item" th:each="activity : ${recentActivities}">
+                        <p><strong th:text="${activity.user}">Juan</strong> <span th:text="${activity.action}">found a</span> <strong th:text="${activity.item}">Blue Wallet</strong></p>
+                        <span th:text="${activity.timeAgo}">2m ago</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div> <!-- END OF DASHBOARD WRAPPER -->
+</main>
+
+                    
 
     <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center;">
         <span onclick="closeLightbox()" style="position:absolute; top:20px; right:30px; color:white; font-size:40px; cursor:pointer;">&times;</span>

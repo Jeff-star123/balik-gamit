@@ -15,4 +15,6 @@ public interface ItemRepository extends JpaRepository<LostItem, Long> {
 
     // ADD THIS LINE BELOW - This handles your new Category Filter
     List<LostItem> findByIsReturnedFalseAndCategory(String category);
+    
+    long countByStatus(String status);
 }

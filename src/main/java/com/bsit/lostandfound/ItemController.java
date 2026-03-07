@@ -36,6 +36,9 @@ public class ItemController {
     @Autowired 
     private CloudinaryService cloudinaryService;
 
+    @Autowired
+    private ActivityLogRepository activityLogRepository;
+
     // Use the Resend service instead of JavaMailSender
     @Autowired
     private com.bsit.lostandfound.service.OtpService otpService;
@@ -109,8 +112,18 @@ public class ItemController {
         if (loggedIn == null) return "redirect:/login";
 
         List<LostItem> activeItems = repository.findByIsReturnedFalse();
+        
+        // Add these 6 lines to prevent the crash
         model.addAttribute("items", activeItems);
         model.addAttribute("student", loggedIn);
+        model.addAttribute("totalFound", repository.countByStatus("FOUND"));
+        model.addAttribute("activeLost", repository.countByStatus("LOST"));
+        model.addAttribute("totalUsers", studentRepository.count());
+        model.addAttribute("recentActivities", activityLogRepository.findTop5ByOrderByTimestampDesc());
+        
+        // If you don't have an onlineUsers list yet, add an empty list to prevent crash
+        model.addAttribute("onlineUsers", new ArrayList<>()); 
+
         return "index";
     }
 
@@ -352,6 +365,14 @@ public class ItemController {
         LostItem item = new LostItem(itemName, description, imageUrl, contactInfo, category, loggedIn);
         item.setStatus("FOUND"); 
         repository.save(item);
+
+        // --- ADD THESE NEW LINES ---
+        ActivityLog log = new ActivityLog();
+        log.setUser(loggedIn.getName());
+        log.setAction("found a");
+        log.setItem(itemName);
+        activityLogRepository.save(log);
+        // ---------------------------
         return "redirect:/";
     }
 
@@ -365,6 +386,13 @@ public class ItemController {
         LostItem item = new LostItem(itemName, description, imageUrl, contactInfo, category, loggedIn);
         item.setStatus("LOST"); 
         repository.save(item);
+        // --- ADD THESE NEW LINES ---
+        ActivityLog log = new ActivityLog();
+        log.setUser(loggedIn.getName());
+        log.setAction("lost a");
+        log.setItem(itemName);
+        activityLogRepository.save(log);
+        // ---------------------------
         return "redirect:/";
     }
 
