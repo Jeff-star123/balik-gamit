@@ -470,6 +470,17 @@
                         <i class="fa-brands fa-facebook"></i> Share to Facebook
                     </button>
 
+                    <!-- Messenger Share Button -->
+                    <button class="btn-messenger-share" 
+                        th:onclick="'shareOnMessenger(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'"
+                        style="background-color: #0084FF; color: white; border: none; padding: 8px 15px; border-radius: 5px; margin-left: 5px;">
+                        <i class="fa-brands fa-facebook-messenger"></i> Messenger
+                    </button>
+
+                    <button class="btn btn-secondary btn-sm" th:onclick="'copyItemLink(' + ${item.id} + ')'">
+                        <i class="fa-solid fa-link"></i> Copy Link
+                    </button>
+
                     <div th:if="${session.loggedInStudent != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}" 
                          style="margin-top:15px; display:flex; gap:10px;">
                         <form th:action="@{'/finish/' + ${item.id}}" method="post" style="flex:1;" onsubmit="showCentralNotif('Verified!', 'Item successfully marked as finished.');">
@@ -513,6 +524,24 @@
         function shareOnFacebook(postUrl) {
             const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
             window.open(facebookUrl, 'facebook-share-dialog', 'width=626,height=436');
+        }
+
+        function shareOnMessenger(url) {
+            // Official Facebook Send Dialog
+            window.open(
+                'https://www.facebook.com/dialog/send?app_id=YOUR_FB_APP_ID&link=' + 
+                encodeURIComponent(url) + 
+                '&redirect_uri=' + encodeURIComponent(url),
+                'messenger-share-dialog',
+                'width=626,height=436'
+            );
+        }
+
+        function copyItemLink(id) {
+            const url = 'https://balik-gamit-production.up.railway.app/item/' + id;
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Link copied! You can now paste it into Messenger.");
+            });
         }
 
         // --- ORIGINAL DASHBOARD FUNCTIONS ---
