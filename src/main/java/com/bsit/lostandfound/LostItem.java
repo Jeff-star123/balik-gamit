@@ -12,6 +12,7 @@ public class LostItem {
     
     private String name;
     private String description;
+    @Column(length = 1000)
     private String imagePath;
     private String contactInfo;
     private String category;
@@ -23,6 +24,7 @@ public class LostItem {
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student poster;
+    
 
     public LostItem() {}
 
