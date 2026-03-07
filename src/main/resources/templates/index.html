@@ -401,7 +401,7 @@
                     <option value="Others">📦 Others</option>
                 </select>
                 <input type="text" name="description" placeholder="Description..." required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-                <input type="text" name="contactInfo" placeholder="Contact Info" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="text" name="contactInfo" placeholder="Facebook Profile Link" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
                 <input type="file" name="imageFile" accept="image/*" style="margin-bottom:15px;">
                 <button type="submit">Post Found Item</button>
             </form>
@@ -454,7 +454,7 @@
                     <h3 th:text="${item.name}" style="margin: 5px 0 10px 0;">Item Name</h3>
                     <p class="item-description" th:text="${item.description}" style="font-size: 0.9rem; color: #555;">Desc</p>
                     <p style="font-size: 0.85rem;">
-                        <strong>📞 Contact:</strong> 
+                        <strong> Facebook link:</strong> 
                         <span class="linkify-contact" th:text="${item.contactInfo}"></span>
                     </p>
                     
