@@ -113,15 +113,17 @@ public class ItemController {
 
         List<LostItem> activeItems = repository.findByIsReturnedFalse();
         
-        // Add these 6 lines to prevent the crash
+        // Existing attributes
         model.addAttribute("items", activeItems);
         model.addAttribute("student", loggedIn);
+
+        // NEW: Add these to match your HTML
         model.addAttribute("totalFound", repository.countByStatus("FOUND"));
         model.addAttribute("activeLost", repository.countByStatus("LOST"));
         model.addAttribute("totalUsers", studentRepository.count());
         model.addAttribute("recentActivities", activityLogRepository.findTop5ByOrderByTimestampDesc());
         
-        // If you don't have an onlineUsers list yet, add an empty list to prevent crash
+        // THIS PREVENTS THE "onlineUsers" CRASH
         model.addAttribute("onlineUsers", new ArrayList<>()); 
 
         return "index";
