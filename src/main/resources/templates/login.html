@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>BALIK GAMIT | Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- FIGMA DESIGN SYSTEM --- */
+        :root {
+            --glass-heavy: rgba(255, 255, 255, 0.95);
+            --text-main: #2d3436;
+            --primary-accent: #23a6d5;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            color: var(--text-main);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .login-card { 
+            background: var(--glass-heavy); 
+            backdrop-filter: blur(20px);
+            padding: 45px; 
+            border-radius: 30px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); 
+            width: 100%; 
+            max-width: 420px; 
+            text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        h2 { 
+            color: #1e272e; 
+            margin-bottom: 10px; 
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- FORMS & INPUTS --- */
+        input { 
+            width: 100%; 
+            padding: 14px 18px; 
+            margin: 10px 0; 
+            border: 2px solid #f1f2f6; 
+            border-radius: 15px; 
+            background: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1e272e !important;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus { 
+            border-color: var(--primary-accent);
+            outline: none;
+            box-shadow: 0 0 10px rgba(35, 166, 213, 0.1);
+        }
+
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            background: linear-gradient(to right, #23a6d5, #23d5ab);
+            color: white; 
+            border: none; 
+            border-radius: 15px; 
+            font-weight: 700; 
+            font-size: 1rem;
+            cursor: pointer; 
+            margin-top: 20px; 
+            transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 15px rgba(35, 166, 213, 0.3);
+        }
+
+        button:hover { 
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 6px 20px rgba(35, 166, 213, 0.4);
+        }
+
+        /* --- LINKS --- */
+        .register-link { 
+            display: block; 
+            margin-top: 25px; 
+            text-decoration: none; 
+            color: #e73c7e; 
+            font-size: 0.95rem; 
+            font-weight: 700; 
+            transition: 0.3s;
+        }
+
+        .register-link:hover { opacity: 0.8; }
+
+        .forgot-link {
+            text-decoration: none; 
+            color: #636e72; 
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+        
+        .forgot-link:hover { color: #dc3545; }
+
+        /* --- MESSAGES --- */
+        .alert {
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .alert-error { background-color: #ff7675; color: white; border: none; }
+        .alert-success { background-color: #55efc4; color: #00b894; border: none; }
+
+        /* --- ORIGINAL SHAKE ANIMATION --- */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+        }
+        .shake-error {
+            animation: shake 0.4s ease-in-out;
+            border: 2px solid #ff7675 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card" id="loginCard">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Enter your student credentials to continue.</p>
+        
+        <div th:if="${error}" id="errorTrigger">
+            <div class="alert alert-error">
+                <i class="fa-solid fa-triangle-exclamation"></i> Invalid Student ID or Password
+            </div>
+        </div>
+
+        <div th:if="${param.resetSuccess}" class="alert alert-success">
+            <i class="fa-solid fa-circle-check"></i> Password updated! Please login.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <input type="text" name="studentId" placeholder="Student ID" required>
+            <input type="password" name="password" id="loginPass" placeholder="Password" required>
+            
+            <div style="text-align: left; font-size: 0.85rem; margin: 10px 0; color: #636e72;">
+                <label style="cursor: pointer; display: flex; align-items: center;">
+                    <input type="checkbox" onclick="togglePass('loginPass')" style="width: auto; margin: 0 8px 0 0;"> 
+                    Show Password
+                </label>
+            </div>
+
+            <button type="submit">Login to Dashboard</button>
+            <a href="/register" class="register-link">New student? Create Account</a>
+        </form>
+
+        <div style="margin-top: 20px;">
+            <a href="/forgot-password" class="forgot-link">Forgot Password?</a>
+        </div>
+    </div>
+
+    <script>
+        function togglePass(inputId) {
+            var x = document.getElementById(inputId);
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+
+        window.onload = function() {
+            // If the error div exists, trigger the shake (Original Logic)
+            if (document.getElementById('errorTrigger')) {
+                const card = document.getElementById('loginCard');
+                card.classList.add('shake-error');
+            }
+        };
+    </script>
+</body>
+</html>

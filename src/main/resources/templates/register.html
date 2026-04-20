@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>BALIK GAMIT | Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- FIGMA GLASSMORPHISM THEME --- */
+        :root {
+            --glass: rgba(255, 255, 255, 0.15);
+            --glass-heavy: rgba(255, 255, 255, 0.95);
+            --text-main: #2d3436;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .register-card {
+            background: var(--glass-heavy);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        h2 {
+            font-weight: 800;
+            font-size: 2rem;
+            color: #1e272e;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        /* --- INPUTS --- */
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            margin: 8px 0;
+            border: 2px solid #f1f2f6;
+            border-radius: 15px;
+            background: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1e272e !important;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #23a6d5;
+            outline: none;
+            box-shadow: 0 0 10px rgba(35, 166, 213, 0.1);
+        }
+
+        /* --- BUTTONS --- */
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        #sendOtpBtn {
+            width: auto !important;
+            background: #3498db;
+            color: white;
+            padding: 0 20px;
+            height: 52px;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+
+        #finalRegisterBtn {
+            background: linear-gradient(to right, #23a6d5, #23d5ab);
+            color: white;
+            margin-top: 20px;
+            display: none; 
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .login-link {
+            display: block;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #e73c7e;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        #id-status {
+            display: block;
+            font-size: 0.8rem;
+            text-align: left;
+            margin-bottom: 5px;
+            padding-left: 5px;
+        }
+
+        #otpSection {
+            display: none; 
+            margin-top: 10px;
+        }
+
+        .checking-spinner {
+            display: inline-block;
+            width: 12px; height: 12px;
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 0.8s linear infinite;
+            margin-right: 5px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- PASSWORD STRENGTH STYLES --- */
+        .pass-req-box {
+            text-align: left;
+            font-size: 0.75rem;
+            margin: 5px 0 15px 5px;
+            color: #636e72;
+        }
+        .req-item { transition: 0.2s; margin-bottom: 2px; }
+        .req-valid { color: #27ae60; font-weight: 600; }
+        .req-invalid { color: #e74c3c; }
+
+        /* --- FIGMA CENTRAL NOTIFICATION STYLES --- */
+        #central-notif-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .figma-modal {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.2);
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .figma-modal.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-icon-container {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #23d5ab, #23a6d5);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 20px;
+            box-shadow: 0 15px 30px rgba(35, 213, 171, 0.3);
+        }
+
+        .modal-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e272e;
+        }
+
+        .modal-content p {
+            margin: 0 0 25px 0;
+            color: #636e72;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 15px;
+            background: #1e272e;
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal-btn:hover {
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="central-notif-overlay">
+        <div id="central-modal" class="figma-modal">
+            <div class="modal-icon-container">
+                <i class="fa-solid fa-paper-plane"></i>
+            </div>
+            <div class="modal-content">
+                <h3 id="notif-title">Success!</h3>
+                <p id="notif-message">Code has been sent to your email.</p>
+            </div>
+            <button class="modal-btn" onclick="closeCentralNotif()">Okay, got it!</button>
+        </div>
+    </div>
+
+    <div class="register-card">
+        <h2>Join Us</h2>
+        <p class="subtitle">Create your student account to get started.</p>
+        
+        <div th:if="${error}" style="background: #ff7675; color: white; padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 0.85rem;">
+            <i class="fa-solid fa-circle-exclamation"></i> <span th:text="${error}"></span>
+        </div>
+        
+        <form th:action="@{/register/send-otp}" method="post" id="regForm" onsubmit="return validatePasswords()">
+            
+            <input type="text" name="studentId" id="studentId" placeholder="Student ID" required oninput="checkIdAvailability()">
+            <span id="id-status"></span>
+
+            <input type="text" name="name" placeholder="Full Name" required>
+
+            <div style="display: flex; align-items: center;">
+                <input type="email" id="email" name="email" placeholder="Institutional Email" required>
+                <button type="button" id="sendOtpBtn" onclick="requestRegistrationOtp()">Send Code</button>
+            </div>
+
+            <p id="timerText" style="font-size: 0.8rem; color: #e73c7e; margin: 5px 0 10px 0; display: none; text-align: left; font-weight: 600;">
+                Resend available in <span id="seconds">60</span>s
+            </p>
+
+            <div id="otpSection">
+                <input type="text" name="userOtp" placeholder="Enter 6-Digit OTP" required maxlength="6">
+            </div>
+
+            <input type="password" name="password" id="regPass" placeholder="Create Password" required onkeyup="checkPasswordStrength()">
+            
+            <div class="pass-req-box">
+                <div id="req-len" class="req-item">✖ Minimum 10 characters</div>
+                <div id="req-num" class="req-item">✖ At least one number</div>
+                <div id="req-spec" class="req-item">✖ Special character (@#$%^&+=!)</div>
+                <div id="req-case" class="req-item">✖ Mixed case (Upper & Lower)</div>
+            </div>
+
+            <input type="password" id="confirmPass" placeholder="Confirm Password" required onkeyup="checkMatch()">
+            
+            <p id="matchError" style="color: #ff7675; font-size: 0.8rem; display: none; margin: 5px 0; text-align: left; font-weight: 600;">
+                ⚠️ Passwords do not match!
+            </p>
+
+            <div style="text-align: left; font-size: 0.85rem; margin: 10px 0; color: #636e72;">
+                <label style="cursor: pointer; display: flex; align-items: center;">
+                    <input type="checkbox" onclick="togglePassFields()" style="width: auto; margin: 0 8px 0 0;"> 
+                    Show Passwords
+                </label>
+            </div>
+
+            <button type="submit" id="finalRegisterBtn">Verify & Register</button>
+        </form>
+
+        <a th:href="@{/login}" class="login-link">Already have an account? Log in</a>
+
+        <script>
+            let countdown;
+
+            // --- PASSWORD STRENGTH CHECKER ---
+            function checkPasswordStrength() {
+                const pass = document.getElementById('regPass').value;
+                
+                const isLen = pass.length >= 10;
+                const isNum = /\d/.test(pass);
+                const isSpec = /[@#$%^&+=!]/.test(pass);
+                const isCase = /[a-z]/.test(pass) && /[A-Z]/.test(pass);
+
+                updateRequirementDisplay('req-len', isLen, "Minimum 10 characters");
+                updateRequirementDisplay('req-num', isNum, "At least one number");
+                updateRequirementDisplay('req-spec', isSpec, "Special character (@#$%^&+=!)");
+                updateRequirementDisplay('req-case', isCase, "Mixed case (Upper & Lower)");
+            }
+
+            function updateRequirementDisplay(id, isValid, text) {
+                const el = document.getElementById(id);
+                el.className = isValid ? 'req-item req-valid' : 'req-item req-invalid';
+                el.innerHTML = (isValid ? '✅ ' : '✖ ') + text;
+            }
+
+            function checkMatch() {
+                const pass = document.getElementById('regPass').value;
+                const confirm = document.getElementById('confirmPass').value;
+                document.getElementById('matchError').style.display = (pass === confirm || confirm === "") ? 'none' : 'block';
+            }
+
+            // --- CENTRAL NOTIFICATION LOGIC ---
+            function showCentralNotif(title, message, iconClass = 'fa-paper-plane') {
+                const overlay = document.getElementById('central-notif-overlay');
+                const modal = document.getElementById('central-modal');
+                const icon = modal.querySelector('.modal-icon-container i');
+                
+                document.getElementById('notif-title').innerText = title;
+                document.getElementById('notif-message').innerText = message;
+                icon.className = `fa-solid ${iconClass}`;
+
+                overlay.style.display = 'flex';
+                setTimeout(() => { modal.classList.add('active'); }, 10);
+            }
+
+            function closeCentralNotif() {
+                const modal = document.getElementById('central-modal');
+                modal.classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('central-notif-overlay').style.display = 'none';
+                }, 400);
+            }
+
+            function requestRegistrationOtp() {
+                const email = document.getElementById('email').value;
+                const btn = document.getElementById('sendOtpBtn');
+                const timerText = document.getElementById('timerText');
+                const secondsSpan = document.getElementById('seconds');
+                const otpSection = document.getElementById('otpSection');
+                const finalBtn = document.getElementById('finalRegisterBtn');
+
+                if (!email || !email.includes('@')) {
+                    showCentralNotif('Invalid Email', 'Please use your valid institutional email address.', 'fa-circle-xmark');
+                    return;
+                }
+
+                btn.disabled = true;
+
+                fetch('/send-otp?email=' + email, { method: 'POST' })
+                    .then(res => res.text()) // Get text response (OK or SKIP)
+                    .then(data => {
+                        if (data === "SKIP") {
+                            showCentralNotif('Verification Paused', 'Email verification is currently disabled. You may proceed.', 'fa-circle-check');
+                            otpSection.style.display = "none"; 
+                            document.getElementsByName('userOtp')[0].value = "000000"; 
+                            finalBtn.style.display = "block";
+                            finalBtn.innerText = "Register Now";
+                        } else if (data === "OK") {
+                            showCentralNotif('Code Sent!', 'Check your inbox for the 6-digit code.', 'fa-envelope-circle-check');
+                            otpSection.style.display = "block";
+                            finalBtn.style.display = "block";
+                            
+                            timerText.style.display = "block";
+                            let timeLeft = 60;
+                            countdown = setInterval(() => {
+                                timeLeft--;
+                                secondsSpan.innerText = timeLeft;
+                                if (timeLeft <= 0) {
+                                    clearInterval(countdown);
+                                    btn.disabled = false;
+                                    timerText.style.display = "none";
+                                }
+                            }, 1000);
+                        } else {
+                            showCentralNotif('Error', 'Could not send OTP.', 'fa-triangle-exclamation');
+                            btn.disabled = false;
+                        }
+                    });
+            }
+
+            function togglePassFields() {
+                var p1 = document.getElementById("regPass");
+                var p2 = document.getElementById("confirmPass");
+                var type = p1.type === "password" ? "text" : "password";
+                p1.type = type; p2.type = type;
+            }
+
+            function validatePasswords() {
+                var pass = document.getElementById("regPass").value;
+                var confirm = document.getElementById("confirmPass").value;
+                
+                // Strength check regex
+                var strongRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{10,}$/;
+
+                if (!strongRegex.test(pass)) {
+                    showCentralNotif('Weak Password', 'Please follow all security requirements for your password.', 'fa-shield-halved');
+                    return false;
+                }
+
+                if (pass !== confirm) {
+                    document.getElementById("matchError").style.display = "block";
+                    return false;
+                }
+                return true;
+            }
+
+            function checkIdAvailability() {
+                const studentId = document.getElementById('studentId').value;
+                const idStatus = document.getElementById('id-status');
+
+                if (studentId.length === 9) {
+                    idStatus.innerHTML = '<span class="checking-spinner"></span> Checking...';
+                    idStatus.style.color = '#3498db';
+
+                    fetch('/check-id?studentId=' + studentId)
+                        .then(res => res.json())
+                        .then(isAvailable => {
+                            if (isAvailable) {
+                                idStatus.innerHTML = '✅ ID is available';
+                                idStatus.style.color = '#27ae60';
+                            } else {
+                                idStatus.innerHTML = '❌ ID is already taken';
+                                idStatus.style.color = '#e74c3c';
+                            }
+                        });
+                } else {
+                    idStatus.innerHTML = '';
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>

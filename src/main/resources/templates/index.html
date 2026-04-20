@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>BALIK GAMIT | Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 for modern Toasts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        })();
+    </script>
+
+    <style>
+        /* --- ORIGINAL STYLES --- */
+        .post-panel h3 {
+            color: #1e272e !important;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: none;
+        }
+
+        .post-panel button[type="submit"] {
+            background: #00b894 !important;
+            color: white !important;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+        }
+
+        .post-panel button[type="submit"]:hover {
+            background: #00947a !important;
+            transform: translateY(-2px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: row; 
+            align-items: stretch;
+            justify-content: flex-start; 
+            text-align: left;
+        }
+
+        .sidebar {
+            width: 250px;
+            min-width: 250px;
+            height: 100vh;
+            position: sticky; 
+            top: 0;
+            left: 0;
+            flex-shrink: 0; 
+        }
+
+        :root {
+            --glass: rgba(255, 255, 255, 0.15);
+            --glass-heavy: rgba(255, 255, 255, 0.95);
+            --sidebar-width: 280px;
+            --text-main: #2d3436;
+            --text-sub: #636e72;
+            --card-border: rgba(255, 255, 255, 0.5);
+            --accent: #764ba2;
+            --found-green: #00b894;
+            --lost-red: #ff7675;
+            --fb-blue: #1877F2;
+        }
+
+        [data-theme="dark"] {
+            --glass: rgba(0, 0, 0, 0.3);
+            --glass-heavy: rgba(30, 30, 30, 0.95);
+            --text-main: #f5f6fa;
+            --text-sub: #b2bec3;
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            color: var(--text-main);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            height: 100vh;
+            position: fixed;
+            padding: 40px 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar h2 { font-weight: 800; margin-bottom: 40px; text-align: center; }
+        .sidebar-nav { list-style: none; padding: 0; margin: 0; }
+        .sidebar-nav li a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+            font-weight: 500;
+            gap: 12px;
+        }
+        .sidebar-nav li a:hover { background: rgba(255, 255, 255, 0.2); transform: translateX(8px); }
+
+        .dashboard-container {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 40px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .search-form {
+            background: white;
+            padding: 5px 10px 5px 25px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .search-form input { border: none; outline: none; width: 100%; padding: 10px; font-family: inherit; }
+        .search-btn { background: #764ba2; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+
+        .feed-header-tabs {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px 25px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            cursor: pointer;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-left: 10px;
+            transition: 0.3s;
+        }
+        .tab-btn.active { background: white; color: #333; }
+        .tab-btn.missing-tab.active { background: var(--lost-red); color: white; }
+        .tab-btn.found-tab.active { background: var(--found-green); color: white; }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .item-card {
+            background: var(--glass-heavy);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            border: 1px solid white;
+            display: flex;
+            flex-direction: column;
+        }
+        .item-card:hover { transform: translateY(-10px); }
+        .image-container { position: relative; height: 200px; }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-badge.lost { background: var(--lost-red) !important; color: white !important; }
+        .status-badge.found { background: var(--found-green) !important; color: white !important; }
+
+        .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .category-tag { font-size: 0.75rem; color: #764ba2; font-weight: 700; text-transform: uppercase; }
+
+        .post-panel {
+            display: none;
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: slideDown 0.4s ease-out;
+        }
+        @keyframes slideDown { from { opacity:0; transform: translateY(-20px); } to { opacity:1; transform: translateY(0); } }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px;
+            background: var(--glass-heavy);
+            border-radius: 30px;
+        }
+
+        /* --- ACTION BUTTONS --- */
+        .card-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .btn-fb { background: #1877F2; color: white; }
+        .btn-msgr { background: #0084FF; color: white; }
+        .btn-copy { background: #6c757d; color: white; }
+        .card-btn:hover { opacity: 0.9; transform: scale(1.02); }
+
+        /* --- FIGMA CENTRAL NOTIFICATION STYLES --- */
+        #central-notif-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .figma-modal {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 40px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.2);
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .figma-modal.active { transform: scale(1); opacity: 1; }
+
+        .modal-icon-container {
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, #23d5ab, #23a6d5);
+            color: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; margin: 0 auto 25px;
+            box-shadow: 0 15px 35px rgba(35, 213, 171, 0.4);
+        }
+
+        .modal-content h2 { margin: 0 0 10px 0; font-size: 1.8rem; font-weight: 800; color: #1e272e; }
+        .modal-content p { margin: 0 0 30px 0; color: #636e72; font-size: 1rem; line-height: 1.5; }
+
+        .modal-btn {
+            width: 100%; padding: 16px; background: #1e272e; color: white; border: none;
+            border-radius: 20px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s;
+        }
+        .modal-btn:hover { background: #000; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+    <div id="central-notif-overlay">
+        <div id="central-modal" class="figma-modal">
+            <div class="modal-icon-container">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="modal-content">
+                <h2 id="notif-title">Action Successful</h2>
+                <p id="notif-message">The operation has been completed.</p>
+            </div>
+            <button class="modal-btn" onclick="closeCentralNotif()">Continue</button>
+        </div>
+    </div>
+
+    <nav class="sidebar">
+        <h2>BALIK GAMIT</h2>
+        <ul class="sidebar-nav">
+            <li><a th:href="@{/}" class="active"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li><a href="#" onclick="togglePanel('postFoundPanel')"><i class="fa-solid fa-plus-circle"></i> Post Found Item</a></li>
+            <li><a href="#" onclick="togglePanel('postLostPanel')"><i class="fa-solid fa-magnifying-glass"></i> Post Lost Item</a></li> 
+            <li><a th:href="@{/profile}"><i class="fa-solid fa-user"></i> Profile</a></li>
+            <li><a th:href="@{/settings}"><i class="fa-solid fa-gear"></i> Settings</a></li>
+            <li><a th:href="@{/developers}"><i class="fa-solid fa-code"></i> Developers</a></li>
+        </ul>
+        <div style="margin-top: auto;">
+            <a th:href="@{/logout}" class="nav-link" style="color: #ff7675;" onclick="return confirm('Log out?')">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+    <div class="dashboard-wrapper" style="display: flex; gap: 40px; align-items: flex-start;">
+        
+        <!-- LEFT/CENTER: Feed & Widgets -->
+        <div class="feed-section" style="flex: 1; min-width: 0;">
+
+        <div class="top-bar">
+            <h1 style="color: white; font-weight: 800; margin: 0;">Active Feed</h1>
+            <div class="search-form">
+                <input type="text" id="liveSearch" oninput="liveFilter()" placeholder="Search for items..." 
+                    style="color: #1e272e !important; background: white !important;">
+                <button type="button" class="search-btn">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ANALYTICS WIDGETS -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <span class="stat-value" th:text="${totalFound}">0</span>
+                <span class="stat-label">Items Found</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" th:text="${activeLost}">0</span>
+                <span class="stat-label">Active Lost</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" th:text="${totalUsers}">0</span>
+                <span class="stat-label">Members</span>
+            </div>
+        </div>
+
+        <div id="postFoundPanel" class="post-panel">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h3>Report a Found Item</h3>
+                <button onclick="togglePanel('postFoundPanel')" style="border:none; background:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <form th:action="@{/report}" method="post" enctype="multipart/form-data" class="report-form" onsubmit="showCentralNotif('Submitting...', 'Uploading your found item report.');">
+                <input type="text" name="itemName" placeholder="Item Name" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <select name="category" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px;">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Electronics">📱 Electronics</option>
+                    <option value="ID/Documents">🪪 IDs / Documents</option>
+                    <option value="Keys">🔑 Keys</option>
+                    <option value="Wallets/Bags">💼 Wallets & Bags</option>
+                    <option value="Others">📦 Others</option>
+                </select>
+                <input type="text" name="description" placeholder="Description..." required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="text" name="contactInfo" placeholder="Facebook Profile Link" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="file" name="imageFile" accept="image/*" style="margin-bottom:15px;">
+                <button type="submit">Post Found Item</button>
+            </form>
+        </div>
+
+        <div id="postLostPanel" class="post-panel">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h3>Report a Lost Item</h3>
+                <button onclick="togglePanel('postLostPanel')" style="border:none; background:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <form th:action="@{/report-lost}" method="post" enctype="multipart/form-data" class="report-form" onsubmit="showCentralNotif('Submitting...', 'Uploading your lost item report.');">
+                <input type="text" name="itemName" placeholder="Item Name" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <select name="category" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px;">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Electronics">📱 Electronics</option>
+                    <option value="ID/Documents">🪪 IDs / Documents</option>
+                    <option value="Others">📦 Others</option>
+                </select>
+                <input type="text" name="description" placeholder="Where did you last see it?" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="text" name="contactInfo" placeholder="Contact Info" required style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                <input type="file" name="imageFile" accept="image/*" style="margin-bottom:15px;">
+                <button type="submit">Post Lost Report</button>
+            </form>
+        </div>
+
+        <!-- FEED FILTER TABS -->
+        <div class="feed-header-tabs">
+            <span style="color:white; font-weight:600;">Filter Feed:</span>
+            <div class="tab-controls">
+                <button class="tab-btn active" onclick="filterByStatus('ALL', event)">All Items</button>
+                <button class="tab-btn missing-tab" onclick="filterByStatus('LOST', event)">❌ Lost</button>
+                <button class="tab-btn found-tab" onclick="filterByStatus('FOUND', event)">✅ Found</button>
+            </div>
+        </div>
+
+        <div class="item-grid" id="activeFeed">
+            <div th:if="${#lists.isEmpty(items)}" class="empty-state">
+                <i class="fa-solid fa-box-open" style="font-size: 4rem; color: #ccc; margin-bottom: 20px;"></i>
+                <h2>No items reported yet</h2>
+                <p>Be the first one to post a report!</p>
+            </div>
+            
+            <div th:each="item : ${items}" class="item-card" th:data-status="${item.status}">
+                <div class="image-container">
+                    <span th:class="${item.status == 'LOST' or item.status == 'MISSING' ? 'status-badge lost' : 'status-badge found'}" 
+                          th:text="${item.status}">Status</span>
+                    <img th:src="${item.imagePath != null ? item.imagePath : '/images/default.jpg'}" onclick="openLightbox(this)" style="cursor:zoom-in;">
+                </div>
+                <div class="card-content">
+                    <span class="category-tag" th:text="${item.category}">Category</span>
+                    <h3 th:text="${item.name}" style="margin: 5px 0 10px 0;">Item Name</h3>
+                    
+                    <!-- NEW: POSTER AND TIME (NULL SAFE) -->
+                    <div class="meta-info" style="font-size: 0.8rem; color: #636e72; margin-bottom: 12px;">
+                        <span th:if="${item.poster != null}">
+                           <i class="fa-solid fa-user"></i> Posted by: <strong th:text="${item.poster.name}">User</strong>
+                        </span>
+                        <span th:if="${item.poster == null}">
+                           <i class="fa-solid fa-user"></i> Posted by: <strong>Anonymous</strong>
+                        </span>
+                        <br>
+                        <i class="fa-solid fa-clock"></i> <span th:text="${item.getFormattedDate != null ? item.getFormattedDate() : 'Just now'}">Time</span>
+                    </div>
+
+                    <p class="item-description" th:text="${item.description}" style="font-size: 0.9rem; color: #555; margin-bottom: 15px;">Desc</p>
+                    
+                    <div style="font-size: 0.85rem; margin-bottom: 15px; padding: 10px; background: rgba(0,0,0,0.03); border-radius: 8px;">
+                        <strong><i class="fa-solid fa-link"></i> Contact Info:</strong><br>
+                        <span class="linkify-contact" th:text="${item.contactInfo}"></span>
+                    </div>
+                    
+                    <!-- NEW: SOCIAL SHARE GROUP -->
+                    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 5px;">
+                        <div style="display: flex; gap: 5px;">
+                            <button class="card-btn btn-fb" style="flex: 1;" 
+                                    th:onclick="'shareOnFacebook(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'">
+                                <i class="fa-brands fa-facebook"></i>
+                            </button>
+                            <button class="card-btn btn-msgr" style="flex: 1;" 
+                                    th:onclick="'shareOnMessenger(\'https://balik-gamit-production.up.railway.app/item/' + ${item.id} + '\')'">
+                                <i class="fa-brands fa-facebook-messenger"></i>
+                            </button>
+                            <button class="card-btn btn-copy" style="flex: 1;" 
+                                    th:onclick="'copyItemLink(' + ${item.id} + ')'">
+                                <i class="fa-solid fa-link"></i>
+                            </button>
+                        </div>
+
+                        <!-- NEW: MANAGEMENT (NULL SAFE) -->
+                        <div th:if="${session.loggedInStudent != null and item.poster != null and (session.loggedInStudent.studentId == item.poster.studentId or session.loggedInStudent.isAdmin)}" 
+                             style="display: flex; gap: 5px; margin-top: 5px;">
+                            
+                            <form th:action="@{'/finish/' + ${item.id}}" method="post" style="flex:1;">
+                                <button type="submit" class="card-btn" style="background-color: #00BC94; color: white;" onclick="return confirm('Mark as finished?')">Finish</button>
+                            </form>
+                            
+                            <form th:action="@{'/delete/' + ${item.id}}" method="post" style="flex:1;">
+                                <button type="submit" class="card-btn" style="background-color: #FF7B7B; color: white;" onclick="return confirm('Delete forever?')">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR: Social & Activity -->
+            <aside class="right-sidebar" style="width: 320px; flex-shrink: 0;">
+                <div class="sidebar-widget">
+                    <h3><i class="fa-solid fa-circle" style="color: #27ae60; font-size: 0.7rem;"></i> Online Now</h3>
+                    <div class="online-list">
+                        <div th:each="onlineStudent : ${onlineUsers}" class="user-badge" style="margin-bottom: 10px;">
+                            <div class="avatar-mini" 
+                                th:text="${#strings.substring(onlineStudent.name,0,1)}" 
+                                style="background: #23a6d5; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">
+                            </div>
+                            <span th:text="${onlineStudent.name}" style="font-size: 0.9rem; color: var(--text-main);">User Name</span>
+                        </div>
+                        
+                        <p th:if="${onlineUsers == null or onlineUsers.size() <= 1}" style="font-size: 0.8rem; color: #636e72;">No one else is online.</p>
+                    </div>
+                </div>
+
+                <div class="sidebar-widget" style="margin-top: 20px;">
+                    <h3><i class="fa-solid fa-clock-rotate-left" style="color: #23a6d5; font-size: 0.8rem;"></i> Recent Activity</h3>
+                    <div class="activity-feed">
+                        <div th:each="act : ${recentActivities}" class="activity-item" style="margin-bottom: 15px; border-left: 2px solid #23a6d5; padding-left: 10px;">
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--text-main);">
+                                <strong th:text="${act.user}">User</strong> 
+                                <span th:text="${act.action}">action</span>
+                                <span th:text="${act.item}" style="color: #23a6d5;">item</span>
+                            </p>
+                            <small th:text="${act.getTimeAgo()}" style="color: #636e72; font-size: 0.75rem;">2m ago</small>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center;">
+        <span onclick="closeLightbox()" style="position:absolute; top:20px; right:30px; color:white; font-size:40px; cursor:pointer;">&times;</span>
+        <img id="imgFull" style="max-width:90%; max-height:90%; border-radius:10px;">
+    </div>
+
+    <script>
+        function showCentralNotif(title, message) {
+            const overlay = document.getElementById('central-notif-overlay');
+            const modal = document.getElementById('central-modal');
+            document.getElementById('notif-title').innerText = title;
+            document.getElementById('notif-message').innerText = message;
+            overlay.style.display = 'flex';
+            setTimeout(() => { modal.classList.add('active'); }, 10);
+        }
+
+        function closeCentralNotif() {
+            const modal = document.getElementById('central-modal');
+            modal.classList.remove('active');
+            setTimeout(() => { document.getElementById('central-notif-overlay').style.display = 'none'; }, 400);
+        }
+
+        function shareOnFacebook(postUrl) {
+            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
+            window.open(facebookUrl, 'facebook-share-dialog', 'width=626,height=436');
+        }
+
+        function shareOnMessenger(url) {
+            window.open('https://www.facebook.com/dialog/send?app_id=YOUR_FB_APP_ID&link=' + encodeURIComponent(url) + '&redirect_uri=' + encodeURIComponent(url), 'messenger-share-dialog', 'width=626,height=436');
+        }
+
+        function copyItemLink(id) {
+            const url = 'https://balik-gamit-production.up.railway.app/item/' + id;
+            navigator.clipboard.writeText(url).then(() => {
+                const Toast = Swal.mixin({
+                    toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, timerProgressBar: true
+                });
+                Toast.fire({ icon: 'success', title: 'Link copied!', background: '#ffffff', color: '#333', iconColor: '#00BC94' });
+            });
+        }
+
+        function togglePanel(panelId) {
+            const panels = ['postFoundPanel', 'postLostPanel'];
+            panels.forEach(id => { if (id !== panelId) document.getElementById(id).style.display = 'none'; });
+            const panel = document.getElementById(panelId);
+            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function filterByStatus(status, event) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            const cards = document.querySelectorAll('#activeFeed .item-card');
+            cards.forEach(card => {
+                const itemStatus = card.getAttribute('data-status');
+                card.style.display = (status === 'ALL' || itemStatus === status) ? "flex" : "none";
+            });
+        }
+
+        function openLightbox(el) {
+            document.getElementById("imageModal").style.display = "flex";
+            document.getElementById("imgFull").src = el.src;
+        }
+        function closeLightbox() { document.getElementById("imageModal").style.display = "none"; }
+
+        function liveFilter() {
+            const query = document.getElementById("liveSearch").value.toLowerCase();
+            const cards = document.querySelectorAll('#activeFeed .item-card');
+            cards.forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                const desc = card.querySelector('.item-description').textContent.toLowerCase();
+                card.style.display = (name.includes(query) || desc.includes(query)) ? "flex" : "none";
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const contactFields = document.querySelectorAll('.linkify-contact');
+            contactFields.forEach(field => {
+                const originalText = field.innerText.trim();
+                const urlPattern = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+                if (urlPattern.test(originalText)) {
+                    field.innerHTML = originalText.replace(urlPattern, function(url) {
+                        let href = url.startsWith('www.') ? 'http://' + url : url;
+                        return `<a href="${href}" target="_blank" style="color: #23a6d5; text-decoration: underline; font-weight: 600;">${url}</a>`;
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
