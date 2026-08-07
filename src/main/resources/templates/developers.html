@@ -1,255 +1,275 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>BALIK GAMIT | Meet the Team</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>BALIK GAMIT | Meet Our Developers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
-            --primary-grad: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --glass: rgba(255, 255, 255, 0.95);
-            --text-dark: #2d3436;
+            --bg-main: #f4f0fb;
+            --surface: #ffffff;
+            --text-main: #1e1b2e;
+            --text-sub: #64748b;
+            --card-border: rgba(147, 51, 234, 0.15);
+            --primary-accent: #9333ea;
+            --primary-hover: #7e22ce;
+            --gradient-glow: linear-gradient(135deg, rgba(147, 51, 234, 0.05) 0%, rgba(217, 70, 239, 0.02) 100%);
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --surface: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --card-border: rgba(147, 51, 234, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            margin: 0; padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
             min-height: 100vh;
-            display: flex; flex-direction: column;
+            padding: 40px 16px;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(147, 51, 234, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(217, 70, 239, 0.05) 0%, transparent 40%);
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
         }
 
-        .full-header {
-            width: 100%; height: 350px;
-            position: relative; display: flex;
-            align-items: center; justify-content: center;
-            overflow: hidden; border-bottom: 8px solid rgba(255,255,255,0.2);
+        .hero-banner {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 32px;
+            background: var(--surface);
+            border-radius: 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(147, 51, 234, 0.06);
+            background-image: var(--gradient-glow);
+            position: relative;
         }
 
-        .header-bg-img {
-            width: 100%; height: 100%;
-            object-fit: cover; position: absolute;
-            z-index: 1; filter: brightness(0.4);
+        .hero-banner h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #1e1b2e 0%, #9333ea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
         }
 
-        .header-text { position: relative; z-index: 2; text-align: center; color: white; }
-        .header-text h1 { font-size: 4.5rem; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-
-        .main-layout {
-            display: grid; grid-template-columns: 1fr 1.5fr;
-            gap: 40px; max-width: 1500px;
-            margin: 50px auto; padding: 0 50px;
-            flex-grow: 1; align-items: start;
+        [data-theme="dark"] .hero-banner h1 {
+            background: linear-gradient(135deg, #ffffff 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .thanks-column {
-            position: sticky; top: 20px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px); border-radius: 40px;
-            padding: 60px 40px; color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+        .hero-banner p {
+            color: var(--text-sub);
+            font-size: 0.95rem;
         }
 
-        .thanks-title { font-size: 3rem; font-weight: 800; margin-bottom: 30px; }
-        .thanks-message { font-size: 1.4rem; line-height: 1.8; white-space: pre-wrap; }
-
-        .dev-column { display: flex; flex-direction: column; gap: 30px; }
-
-        .dev-card-big {
-            background: var(--glass); backdrop-filter: blur(10px);
-            padding: 35px; border-radius: 35px;
-            display: flex; align-items: center; gap: 35px;
-            border: 1px solid rgba(255,255,255,0.5);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        .btn-back-home {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(147, 51, 234, 0.08);
+            color: var(--primary-accent);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(147, 51, 234, 0.15);
         }
 
-        /* Styling for the 6th (Last) Developer */
-        .featured-dev {
-            transform: scale(1.05);
-            border: 3px solid #23a6d5;
+        .btn-back-home:hover {
+            background: var(--primary-accent);
+            color: #ffffff;
+        }
+
+        .dev-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .dev-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 30px 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(147, 51, 234, 0.05);
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background-image: var(--gradient-glow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dev-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(147, 51, 234, 0.12);
+        }
+
+        .avatar-wrapper {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(135deg, #9333ea, #d946ef);
+            margin-bottom: 16px;
+        }
+
+        .avatar-wrapper img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
             background: #ffffff;
-            box-shadow: 0 25px 50px rgba(35, 166, 213, 0.2);
         }
 
-        .featured-dev .dev-img { width: 200px; height: 200px; border-color: #23a6d5; }
-        .featured-dev h3 { font-size: 2.5rem; color: #23a6d5; }
+        .dev-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
 
-        .dev-card-big:hover { transform: scale(1.03) translateX(10px); }
-        .dev-img-box { position: relative; flex-shrink: 0; }
-        .dev-img { width: 160px; height: 160px; border-radius: 25px; object-fit: cover; border: 6px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .dev-info h3 { margin: 0; font-size: 2rem; color: var(--text-dark); font-weight: 800; }
-        .role-badge-big { display: inline-block; background: var(--primary-grad); color: white; padding: 8px 20px; border-radius: 12px; font-size: 1rem; font-weight: 600; margin: 15px 0; text-transform: uppercase; letter-spacing: 1px; }
-        .section-text { margin: 0; color: #636e72; font-size: 1.1rem; font-weight: 500; }
+        .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(147, 51, 234, 0.1);
+            color: var(--primary-accent);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
 
-        .edit-btn { background: #ff7675; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 5px 15px rgba(255, 118, 117, 0.4); }
-        .banner-edit { position: absolute; top: 30px; right: 30px; }
-        .thanks-edit { position: absolute; top: 20px; right: 20px; }
-        .card-edit { position: absolute; bottom: -10px; right: -10px; }
+        .section-tag {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 40px; border-radius: 30px; width: 100%; max-width: 500px; }
-        textarea { width: 100%; height: 250px; padding: 15px; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; font-size: 1rem; }
-        input[type="text"], input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box;}
-        
-        /* Responsive Fix */
-        @media (max-width: 1024px) {
-            .main-layout { grid-template-columns: 1fr; }
-            .thanks-column { position: relative; top: 0; }
-            .header-text h1 { font-size: 2.5rem; }
+        .thanks-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 32px 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(147, 51, 234, 0.05);
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+            background-image: var(--gradient-glow);
+        }
+
+        .thanks-card h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        .thanks-card p {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 12px;
+            }
+            .hero-banner {
+                padding: 28px 16px;
+            }
+            .hero-banner h1 {
+                font-size: 1.75rem;
+            }
+            .btn-back-home {
+                position: static;
+                transform: none;
+                margin-bottom: 15px;
+                display: inline-flex;
+            }
         }
     </style>
 </head>
 <body>
 
-    <header class="full-header">
-        <img th:src="${bannerUrl}" class="header-bg-img">
-        <div class="header-text">
-            <p style="letter-spacing: 5px; font-weight: 600; margin-bottom: 10px; opacity: 0.8;">OUR CREATIVE TEAM</p>
+    <div class="container">
+        <!-- Hero Header -->
+        <div class="hero-banner">
+            <a href="/" class="btn-back-home"><i class="fa-solid fa-arrow-left"></i> Home</a>
             <h1>Meet Our Developers</h1>
+            <p>The engineering team behind BALIK GAMIT</p>
         </div>
-        <button th:if="${isAdmin}" class="edit-btn banner-edit" onclick="openBannerModal()">✏️</button>
-    </header>
 
-    <div class="main-layout">
-        
-        <aside class="thanks-column">
-            <button th:if="${isAdmin}" class="edit-btn thanks-edit" onclick="openMessageModal()">✏️</button>
-            <h2 class="thanks-title">Special Thanks</h2>
-            <div class="thanks-message">
-                <p id="currentThanksDisplay" th:text="${specialThanks != null ? specialThanks : 'Our sincerest thanks go to our professor, Sir Arjet Ragub Millan, for his constant encouragement and technical insights throughout the development of BALIK GAMIT. His dedication to teaching and his belief in our team’s potential provided us with the motivation needed to overcome every challenge we faced.'}"></p>
+        <!-- Developer Grid -->
+        <div class="dev-grid">
+            <!-- Developer 1 -->
+            <div class="dev-card">
+                <div class="avatar-wrapper">
+                    <img src="https://cdn.phototourl.com/free/2026-08-07-042bf66a-68a8-45c7-8cf2-24594d38661a.jpg" alt="Jeffrey M. Serrano Jr.">
+                </div>
+                <h3>Jeffrey M. Serrano Jr.</h3>
+                <span class="role-badge">Lead Developer</span>
+                <span class="section-tag"><i class="fa-solid fa-graduation-cap"></i> BSIT-3A</span>
             </div>
-            <div style="margin-top: 40px;">
-                <a th:href="@{/}" style="color: white; text-decoration: none; border: 2px solid white; padding: 12px 30px; border-radius: 50px; font-weight: 600;">← Back Home</a>
+
+            <!-- Developer 2 -->
+            <div class="dev-card">
+                <div class="avatar-wrapper">
+                    <img src="https://cdn.phototourl.com/free/2026-08-07-8753c90d-7c02-4993-bec9-ccc5880dd903.jpg" alt="Ako ulit">
+                </div>
+                <h3>Ako ulit</h3>
+                <span class="role-badge">Frontend Engineer</span>
+                <span class="section-tag"><i class="fa-solid fa-graduation-cap"></i> BSIT-3A</span>
             </div>
-        </aside>
 
-        <section class="dev-column">
-            <div th:each="dev, iterStat : ${developers}" 
-                class="dev-card-big" 
-                th:id="'dev-card-' + ${iterStat.index}"
-                th:classappend="${iterStat.last} ? 'featured-dev' : ''"
-                th:data-id="${dev.id}"
-                th:data-name="${dev.name}"
-                th:data-contrib="${dev.contributions}"
-                th:data-section="${dev.section}">
-                
-                <div class="dev-img-box">
-                    <img th:src="${dev.photoUrl}" class="dev-img">
-                    <button th:if="${isAdmin}" class="edit-btn card-edit" 
-                            th:onclick="'openDevModal(' + ${iterStat.index} + ')'">✏️</button>
+            <!-- Developer 3 -->
+            <div class="dev-card">
+                <div class="avatar-wrapper">
+                    <img src="https://cdn.phototourl.com/free/2026-08-07-dfdbfcc5-c5c4-4653-af2f-b96cb5ac8d7a.png" alt="Ako ulit HAHAHAHA">
                 </div>
-                <div class="dev-info">
-                    <h3 th:text="${dev.name}">Developer Name</h3>
-                    <div class="role-badge-big" th:text="${dev.contributions}">Lead Programmer</div>
-                    <p class="section-text">
-                        Section: <span th:text="${dev.section}">BSIT 1-01</span>
-                    </p>
-                </div>
+                <h3>Ako ulit HAHAHAHA</h3>
+                <span class="role-badge">Backend Specialist</span>
+                <span class="section-tag"><i class="fa-solid fa-graduation-cap"></i> BSIT-3A</span>
             </div>
-        </section>
+        </div>
 
-    </div>
-
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <h2 id="modalTitle" style="margin-top:0;">Update Content</h2>
-            <form id="updateForm" th:action="@{/developers/update}" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="id" id="editId">
-                <input type="hidden" name="devIndex" id="devIndex">
-                
-                <div id="devGroup">
-                    <label>Profile Image:</label>
-                    <input type="file" name="photo">
-                    <input type="text" name="name" id="editName" placeholder="Full Name">
-                    <input type="text" name="contributions" id="editContrib" placeholder="Role">
-                    <input type="text" name="section" id="editSection" placeholder="Section">
-                </div>
-
-                <div id="thanksGroup" style="display:none;">
-                    <label>Edit Message:</label>
-                    <textarea name="specialThanks" id="editThanksText"></textarea>
-                </div>
-
-                <div style="display:flex; gap:15px; margin-top:25px;">
-                    <button type="submit" style="flex:1; padding:15px; background:var(--primary-grad); color:white; border:none; border-radius:15px; font-weight:bold; cursor:pointer;">Save Changes</button>
-                    <button type="button" onclick="closeModal()" style="flex:1; background:#f1f3f5; border:none; border-radius:15px; cursor:pointer;">Cancel</button>
-                </div>
-            </form>
+        <!-- Special Thanks / Full Stack Joke -->
+        <div class="thanks-card">
+            <h2><i class="fa-solid fa-layer-group" style="color: var(--primary-accent);"></i> The Engineering Team</h2>
+            <p>
+                Why hire a whole tech startup when you have a <strong>Full Stack Developer</strong> who argues with himself during code reviews, acts as both frontend designer and backend architect, and fixes his own bugs at 3:00 AM? Teamwork makes the dream work (even when it's just one guy)!
+            </p>
         </div>
     </div>
 
-    <script>
-        function openDevModal(index) {
-            const card = document.getElementById('dev-card-' + index);
-            document.getElementById('editId').value = card.getAttribute('data-id');
-            document.getElementById('devIndex').value = index; 
-            document.getElementById('editName').value = card.getAttribute('data-name');
-            document.getElementById('editContrib').value = card.getAttribute('data-contrib');
-            document.getElementById('editSection').value = card.getAttribute('data-section');
-            
-            document.getElementById('modalTitle').innerText = "Edit Developer";
-            document.getElementById('devGroup').style.display = 'block';
-            document.getElementById('thanksGroup').style.display = 'none';
-            toggleInputs(false);
-            document.getElementById('editModal').style.display = 'flex';
-        }
-
-        function openBannerModal() {
-            document.getElementById('editId').value = "";
-            document.getElementById('devIndex').value = "-1"; // Set index to -1 for Banner
-            document.getElementById('modalTitle').innerText = "Edit Banner";
-            document.getElementById('devGroup').style.display = 'block'; 
-            document.getElementById('thanksGroup').style.display = 'none';
-            toggleInputs(false);
-            document.getElementById('editName').style.display = 'none';
-            document.getElementById('editContrib').style.display = 'none';
-            document.getElementById('editSection').style.display = 'none';
-            document.getElementById('editModal').style.display = 'flex';
-        }
-
-        function openMessageModal() {
-            document.getElementById('editId').value = "";
-            document.getElementById('devIndex').value = "-2"; // Set index to -2 for Special Thanks
-            document.getElementById('modalTitle').innerText = "Edit Special Thanks";
-            document.getElementById('devGroup').style.display = 'none';
-            document.getElementById('thanksGroup').style.display = 'block';
-            const currentMessage = document.getElementById('currentThanksDisplay').innerText;
-            document.getElementById('editThanksText').value = currentMessage;
-            toggleInputs(true);
-            document.getElementById('editModal').style.display = 'flex';
-        }
-
-        function toggleInputs(isThanksMode) {
-            // Enable/Disable inputs so the correct data is sent
-            document.getElementById('editName').disabled = isThanksMode;
-            document.getElementById('editContrib').disabled = isThanksMode;
-            document.getElementById('editSection').disabled = isThanksMode;
-            document.getElementById('editThanksText').disabled = !isThanksMode;
-            
-            // Toggle visibility
-            document.getElementById('editName').style.display = isThanksMode ? 'none' : 'block';
-            document.getElementById('editContrib').style.display = isThanksMode ? 'none' : 'block';
-            document.getElementById('editSection').style.display = isThanksMode ? 'none' : 'block';
-        }
-
-        function closeModal() { 
-            document.getElementById('editModal').style.display = 'none'; 
-        }
-        
-        window.onclick = function(event) { 
-            if (event.target == document.getElementById('editModal')) closeModal(); 
-        }
-    </script>
 </body>
 </html>

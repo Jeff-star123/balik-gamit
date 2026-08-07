@@ -1,333 +1,351 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>BALIK GAMIT | Settings</title>
+    <title>BALIK GAMIT | Account Settings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        })();
+    </script>
+
     <style>
-        /* --- ORIGINAL STYLES PRESERVED --- */
-        .post-panel h3 {
-            color: #1e272e !important;
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin: 0;
-            text-shadow: none;
+        /* Component-Specific Layout Rules */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 24px;
+            width: 100%;
+            max-width: 1100px;
         }
 
-        .post-panel button[type="submit"] {
-            background: #00b894 !important;
-            color: white !important;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            transition: transform 0.2s, background 0.2s;
-            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
-        }
-
-        .post-panel button[type="submit"]:hover {
-            background: #00947a !important;
-            transform: translateY(-2px);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
+        .grid-column {
             display: flex;
-            flex-direction: row;
-            align-items: stretch;
-            justify-content: flex-start;
-            text-align: left;
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            min-height: 100vh;
-            color: var(--text-main);
-            transition: color 0.3s ease;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .settings-card {
+            background: var(--surface);
+            border-radius: 14px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        :root {
-            --glass: rgba(255, 255, 255, 0.15);
-            --glass-heavy: rgba(255, 255, 255, 0.95);
-            --sidebar-width: 280px;
-            --text-main: #2d3436;
-            --card-bg: white;
-            --input-bg: #fff;
-        }
-
-        [data-theme="dark"] {
-            --glass: rgba(0, 0, 0, 0.3);
-            --glass-heavy: rgba(30, 30, 30, 0.95);
-            --text-main: #f5f6fa;
-            --card-bg: #2d3436;
-            --input-bg: #3d4446;
-        }
-
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            border-right: 1px solid rgba(255, 255, 255, 0.2);
-            height: 100vh;
-            position: fixed;
-            padding: 40px 20px;
-            color: white;
-            z-index: 100;
-        }
-
-        .sidebar h2 { font-weight: 800; text-align: center; margin-bottom: 40px; }
-        .sidebar-nav { list-style: none; padding: 0; }
-        .sidebar-nav li a {
+        .toggle-card {
             display: flex;
             align-items: center;
-            padding: 15px 20px;
-            color: white;
-            text-decoration: none;
-            border-radius: 15px;
-            margin-bottom: 10px;
-            transition: 0.3s;
-        }
-        .sidebar-nav li a:hover, .sidebar-nav li a.active { background: rgba(255,255,255,0.2); transform: translateX(5px); }
-
-        /* --- NEW ACCORDION STYLES --- */
-        .settings-card {
-            background: var(--glass-heavy);
-            border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-            border: 1px solid rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-            overflow: hidden; /* For smooth transitions */
-            transition: all 0.3s ease;
+            justify-content: space-between;
+            padding: 20px 24px;
+            background: var(--surface);
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
         }
 
+        .toggle-card-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .toggle-card-info i {
+            font-size: 1.1rem;
+            color: var(--primary-accent);
+        }
+
+        .toggle-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            display: block;
+        }
+
+        .toggle-desc {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+        }
+
+        /* Custom Switch Button */
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary-accent); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* Accordion Components */
         .accordion-header {
-            padding: 25px 30px;
+            padding: 20px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            transition: background 0.3s ease;
+            user-select: none;
+            transition: background 0.15s ease;
         }
 
         .accordion-header:hover {
-            background: rgba(0, 0, 0, 0.03);
+            background: rgba(147, 51, 234, 0.02);
         }
 
-        [data-theme="dark"] .accordion-header:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .accordion-header h3 { 
-            margin: 0; 
-            font-size: 1.2rem; 
-            color: #1e272e; 
-            font-weight: 800; 
+        .accordion-header-text {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
-        
+
+        .accordion-header-text i {
+            font-size: 1.1rem;
+            color: var(--primary-accent);
+            width: 20px;
+            text-align: center;
+        }
+
+        .accordion-title {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            font-weight: 700;
+            display: block;
+        }
+
+        .accordion-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            font-weight: 400;
+        }
+
         .accordion-icon {
             transition: transform 0.3s ease;
-            color: #636e72;
+            color: var(--text-sub);
+            font-size: 0.85rem;
         }
 
         .settings-card.active .accordion-icon {
             transform: rotate(180deg);
-            color: #23a6d5;
+            color: var(--primary-accent);
         }
 
         .accordion-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 0 30px;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0 24px;
         }
 
         .settings-card.active .accordion-content {
-            max-height: 500px; /* Adjust as needed */
-            padding-bottom: 30px;
+            max-height: 500px;
+            padding-bottom: 24px;
         }
 
-        /* --- SETTINGS CARDS --- */
-        .main-content {
-            margin-left: var(--sidebar-width);
-            width: calc(100% - var(--sidebar-width));
-            padding: 50px;
+        /* Session Management Card */
+        .session-card {
+            padding: 24px;
+            background: var(--surface);
+            border-radius: 14px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--card-border);
+        }
+
+        .session-card-header {
             display: flex;
-            flex-direction: column;
             align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
-        .settings-container { width: 100%; max-width: 700px; }
-        .section-title { color: white; font-size: 2rem; font-weight: 800; margin-bottom: 30px; }
-
-        [data-theme="dark"] .settings-card h3 { color: #f5f6fa !important; }
-        .danger-zone { border: 2px solid #ff7675; }
-
-        /* Logout Section Styling (Direct - Not Accordion) */
-        .logout-section {
-            text-align: center;
-            padding: 30px;
+        .session-card-header i {
+            color: var(--primary-accent);
+            font-size: 1.1rem;
         }
+
+        .session-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .session-card p {
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
         .btn-logout-settings {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            background: #636e72;
-            color: white !important;
+            gap: 8px;
+            background: rgba(220, 38, 38, 0.06);
+            color: var(--lost-red) !important;
+            border: 1px solid rgba(220, 38, 38, 0.2);
             text-decoration: none;
-            padding: 16px 40px;
-            border-radius: 18px;
+            padding: 11px 18px;
+            border-radius: 10px;
             font-weight: 700;
-            transition: 0.3s;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
             width: 100%;
         }
+
         .btn-logout-settings:hover {
-            background: #b71c1c !important; /* Darker red on hover */
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(214, 48, 49, 0.4);
+            background: var(--lost-red) !important;
+            color: #ffffff !important;
         }
 
-        /* --- INPUTS & BUTTONS --- */
-        input {
+        .danger-card {
+            border: 1px solid rgba(220, 38, 38, 0.25);
+        }
+
+        .danger-card .accordion-header-text i,
+        .danger-card .accordion-title {
+            color: var(--lost-red);
+        }
+
+        /* Inputs & Buttons */
+        .settings-card input {
             width: 100%;
-            padding: 12px 15px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            background: var(--input-bg);
-            color: #1e272e !important;
+            padding: 12px 14px;
+            margin: 6px 0 12px;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            background: var(--bg-main);
+            color: var(--text-main) !important;
             font-family: inherit;
+            font-size: 0.88rem;
+            transition: border-color 0.2s, background 0.2s;
         }
 
-        [data-theme="dark"] input { color: #f5f6fa !important; }
+        .settings-card input:focus {
+            border-color: var(--primary-accent);
+            outline: none;
+            background: var(--surface);
+        }
 
         .btn-verify, .btn-save, .btn-delete-final {
             border: none;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 11px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
+            font-size: 0.88rem;
             width: 100%;
-            transition: 0.3s;
-            margin-top: 10px;
+            transition: opacity 0.2s;
+            margin-top: 4px;
+            font-family: inherit;
         }
 
-        .btn-verify { background: #3498db; color: white; }
-        .btn-save { background: #27ae60; color: white; }
-        .btn-delete-final { background: #d63031; color: white; }
-        .btn-verify:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-verify { background: var(--primary-accent); color: white; }
+        .btn-save { background: var(--found-green); color: white; }
+        .btn-delete-final { background: var(--lost-red); color: white; }
+        .btn-verify:hover, .btn-save:hover, .btn-delete-final:hover { opacity: 0.9; }
 
-        /* --- TOGGLES & SPINNER --- */
-        .toggle-container {
+        .spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .step-2 { display: none; margin-top: 12px; border-top: 1px solid var(--card-border); padding-top: 12px; }
+
+        /* Status Messages */
+        .status-msg {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            font-size: 0.85rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background: var(--glass);
-            padding: 15px 25px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
+            gap: 10px;
+            width: 100%;
+            max-width: 1100px;
         }
+        .status-msg.success { background: rgba(5, 150, 105, 0.08); color: var(--found-green); border: 1px solid rgba(5, 150, 105, 0.2); }
+        .status-msg.error { background: rgba(220, 38, 38, 0.08); color: var(--lost-red); border: 1px solid rgba(220, 38, 38, 0.2); }
 
-        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #23d5ab; }
-        input:checked + .slider:before { transform: translateX(26px); }
-
-        .spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; margin-right: 10px; vertical-align: middle; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .step-2 { display: none; margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 15px; }
-
-        /* --- FIGMA CENTRAL NOTIFICATION STYLES --- */
+        /* Central Modal */
         #central-notif-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            z-index: 9999;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 99999;
             justify-content: center;
             align-items: center;
         }
 
         .figma-modal {
-            background: white;
-            padding: 50px 40px;
-            border-radius: 40px;
+            background: var(--surface);
+            padding: 32px 28px;
+            border-radius: 16px;
             width: 90%;
-            max-width: 400px;
+            max-width: 360px;
             text-align: center;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.2);
-            transform: scale(0.8);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            transform: scale(0.95);
             opacity: 0;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.2s ease-out;
         }
 
-        [data-theme="dark"] .figma-modal { background: #2d3436; color: white; }
         .figma-modal.active { transform: scale(1); opacity: 1; }
 
         .modal-icon-container {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #23d5ab, #23a6d5);
-            color: white;
+            width: 50px;
+            height: 50px;
+            background: rgba(147, 51, 234, 0.08);
+            color: var(--primary-accent);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            margin: 0 auto 20px;
-            box-shadow: 0 15px 30px rgba(35, 213, 171, 0.3);
+            font-size: 1.4rem;
+            margin: 0 auto 16px;
         }
 
-        .modal-content h3 { margin: 0 0 10px 0; font-size: 1.5rem; font-weight: 800; color: #1e272e; }
-        [data-theme="dark"] .modal-content h3 { color: #f5f6fa; }
-        .modal-content p { margin: 0 0 25px 0; color: #636e72; font-size: 0.95rem; line-height: 1.5; }
-        [data-theme="dark"] .modal-content p { color: #b2bec3; }
+        .modal-content h3 { margin: 0 0 6px 0; font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+        .modal-content p { margin: 0 0 20px 0; color: var(--text-sub); font-size: 0.85rem; line-height: 1.4; }
 
         .modal-btn {
             width: 100%;
-            padding: 15px;
-            background: #1e272e;
+            padding: 11px;
+            background: var(--primary-accent);
             color: white;
             border: none;
-            border-radius: 18px;
+            border-radius: 8px;
             font-weight: 700;
+            font-size: 0.88rem;
             cursor: pointer;
-            transition: 0.3s;
+            transition: opacity 0.2s;
         }
+        .modal-btn:hover { opacity: 0.9; }
 
-        [data-theme="dark"] .modal-btn { background: #f5f6fa; color: #1e272e; }
-        .modal-btn:hover { filter: brightness(1.2); }
+        @media (max-width: 960px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <div class="mobile-navbar">
+        <h2>BALIK GAMIT</h2>
+        <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Notification Modal -->
     <div id="central-notif-overlay">
         <div id="central-modal" class="figma-modal">
             <div class="modal-icon-container">
@@ -341,118 +359,180 @@
         </div>
     </div>
 
-    <nav class="sidebar">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
         <h2>BALIK GAMIT</h2>
         <ul class="sidebar-nav">
             <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Dashboard</a></li>
             <li><a th:href="@{/profile}"><i class="fa-solid fa-user"></i> Profile</a></li>
             <li><a th:href="@{/settings}" class="active"><i class="fa-solid fa-gear"></i> Settings</a></li>
+            <li><a th:href="@{/developers}"><i class="fa-solid fa-code"></i> Developers</a></li>
         </ul>
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}" onclick="return confirm('Log out?')">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </div>
     </nav>
 
+    <!-- Main Workspace -->
     <main class="main-content">
-        <div class="settings-container">
-            <h2 class="section-title">Account Settings</h2>
-
-            <div class="toggle-container">
-                <span style="font-weight: 600;"><i class="fa-solid fa-moon"></i> Dark Mode</span>
-                <label class="switch">
-                    <input type="checkbox" id="theme-toggle">
-                    <span class="slider"></span>
-                </label>
+        <!-- Page Header -->
+        <div class="top-bar" style="margin-bottom: 24px;">
+            <div>
+                <h1>Account Settings</h1>
+                <p style="color: var(--text-sub); font-size: 0.95rem; margin-top: 4px;">Manage your account security, interface preferences, and active sessions.</p>
             </div>
+        </div>
+
+        <!-- Status Alerts -->
+        <div th:if="${param.success}" class="status-msg success">
+            <i class="fa-solid fa-circle-check"></i> Changes updated successfully!
+        </div>
+        <div th:if="${error}" class="status-msg error">
+            <i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${error}"></span>
+        </div>
+
+        <!-- 2-Column Dashboard Grid Layout -->
+        <div class="settings-grid">
             
-            <div th:if="${param.success}" class="status-msg" style="background: #27ae60; color: white; padding:15px; border-radius:15px; margin-bottom:20px;">Changes updated successfully!</div>
-            <div th:if="${error}" class="status-msg error" th:text="${error}" style="background: #ff7675; color: white; padding:15px; border-radius:15px; margin-bottom:20px;"></div>
-
-            <div class="settings-card">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <h3><i class="fa-solid fa-lock"></i> Change Password</h3>
-                    <i class="fa-solid fa-chevron-down accordion-icon"></i>
-                </div>
-                <div class="accordion-content">
-                    <div id="pw-step-1">
-                        <input type="email" id="pw-email-check" placeholder="Enter current email" required>
-                        <input type="password" id="pw-pass-check" placeholder="Enter current password" required>
-                        <button class="btn-verify" id="pw-btn" onclick="requestSecureOtp('CHANGE_PASSWORD', 'pw-email-check', 'pw-pass-check', 'pw-btn', 'pw-step-1', 'pw-step-2')">
-                            <span class="spinner"></span> Verify & Send OTP
-                        </button>
+            <!-- Left Column: Primary Settings -->
+            <div class="grid-column">
+                
+                <!-- Appearance Card -->
+                <div class="toggle-card">
+                    <div class="toggle-card-info">
+                        <i class="fa-solid fa-moon"></i>
+                        <div>
+                            <span class="toggle-title">Dark Mode</span>
+                            <span class="toggle-desc">Switch between light and dark theme interface</span>
+                        </div>
                     </div>
-                    
-                    <form th:action="@{/settings/verify-and-update}" method="post" id="pw-step-2" class="step-2">
-                        <input type="text" name="userOtp" placeholder="Enter 6-Digit OTP" required maxlength="6">
-                        <input type="password" name="newDetail" id="newPass" placeholder="New Password" required>
-                        <input type="password" placeholder="Confirm New Password" required oninput="checkMatch(this, 'newPass')">
-                        <button type="submit" class="btn-save">Update Password</button>
-                    </form>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider"></span>
+                    </label>
                 </div>
-            </div>
 
-            <div class="settings-card">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <h3><i class="fa-solid fa-envelope"></i> Change Email Address</h3>
-                    <i class="fa-solid fa-chevron-down accordion-icon"></i>
-                </div>
-                <div class="accordion-content">
-                    <div id="email-step-1">
-                        <input type="email" id="em-email-check" placeholder="Enter current email" required>
-                        <input type="password" id="em-pass-check" placeholder="Enter current password" required>
-                        <button class="btn-verify" id="em-btn" onclick="requestSecureOtp('CHANGE_EMAIL', 'em-email-check', 'em-pass-check', 'em-btn', 'email-step-1', 'email-step-2')">
-                            <span class="spinner"></span> Verify & Send OTP
-                        </button>
+                <!-- Password Management -->
+                <div class="settings-card">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-header-text">
+                            <i class="fa-solid fa-lock"></i>
+                            <div>
+                                <span class="accordion-title">Change Password</span>
+                                <span class="accordion-subtitle">Update your password to keep your account secure</span>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down accordion-icon"></i>
                     </div>
-                    
-                    <form th:action="@{/settings/verify-and-update}" method="post" id="email-step-2" class="step-2">
-                        <input type="text" name="userOtp" placeholder="Enter 6-Digit OTP" required maxlength="6">
-                        <input type="email" name="newDetail" placeholder="New Email Address" required>
-                        <button type="submit" class="btn-save">Update Email</button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="settings-card logout-section">
-                <h3>Session Management</h3>
-                <p style="margin-bottom: 20px; color: var(--text-main); font-size: 0.9rem; opacity: 0.8;">
-                    Finished for now? Log out to keep your account secure.
-                </p>
-                <a th:href="@{/logout}" class="btn-logout-settings" onclick="return confirm('Are you sure you want to log out?')">
-                    <i class="fa-solid fa-right-from-bracket"></i> Logout of Balik Gamit
-                </a>
-            </div>
-
-            <div class="settings-card danger-zone">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <h3 style="color: #d63031;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
-                    <i class="fa-solid fa-chevron-down accordion-icon"></i>
-                </div>
-                <div class="accordion-content">
-                    <div id="del-step-1">
-                        <input type="email" id="del-email-check" placeholder="Registered Email Address" required>
-                        <input type="password" id="del-pw-check" placeholder="Current Password" required>
-                        <button class="btn-verify" id="del-btn" style="background:#d63031" onclick="requestSecureOtp('DELETE_ACCOUNT', 'del-email-check', 'del-pw-check', 'del-btn', 'del-step-1', 'del-step-3')">
-                            <span class="spinner"></span> Request Deletion OTP
-                        </button>
+                    <div class="accordion-content">
+                        <div id="pw-step-1">
+                            <input type="email" id="pw-email-check" placeholder="Enter current email" required>
+                            <input type="password" id="pw-pass-check" placeholder="Enter current password" required>
+                            <button class="btn-verify" id="pw-btn" onclick="requestSecureOtp('CHANGE_PASSWORD', 'pw-email-check', 'pw-pass-check', 'pw-btn', 'pw-step-1', 'pw-step-2')">
+                                <span class="spinner"></span> Verify & Send OTP
+                            </button>
+                        </div>
+                        
+                        <form th:action="@{/settings/verify-and-update}" method="post" id="pw-step-2" class="step-2">
+                            <input type="text" name="userOtp" placeholder="Enter 6-Digit OTP" required maxlength="6">
+                            <input type="password" name="newDetail" id="newPass" placeholder="New Password" required>
+                            <input type="password" placeholder="Confirm New Password" required oninput="checkMatch(this, 'newPass')">
+                            <button type="submit" class="btn-save">Update Password</button>
+                        </form>
                     </div>
-                    
-                    <form th:action="@{/settings/verify-and-update}" method="post" id="del-step-3" class="step-2" onsubmit="return confirmFinalDelete()">
-                        <input type="text" name="userOtp" placeholder="6-Digit OTP" required maxlength="6">
-                        <button type="submit" class="btn-delete-final">Permanently Delete Account</button>
-                    </form>
                 </div>
+
+                <!-- Email Management -->
+                <div class="settings-card">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-header-text">
+                            <i class="fa-solid fa-envelope"></i>
+                            <div>
+                                <span class="accordion-title">Change Email Address</span>
+                                <span class="accordion-subtitle">Update the email associated with your account</span>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div id="email-step-1">
+                            <input type="email" id="em-email-check" placeholder="Enter current email" required>
+                            <input type="password" id="em-pass-check" placeholder="Enter current password" required>
+                            <button class="btn-verify" id="em-btn" onclick="requestSecureOtp('CHANGE_EMAIL', 'em-email-check', 'em-pass-check', 'em-btn', 'email-step-1', 'email-step-2')">
+                                <span class="spinner"></span> Verify & Send OTP
+                            </button>
+                        </div>
+                        
+                        <form th:action="@{/settings/verify-and-update}" method="post" id="email-step-2" class="step-2">
+                            <input type="text" name="userOtp" placeholder="Enter 6-Digit OTP" required maxlength="6">
+                            <input type="email" name="newDetail" placeholder="New Email Address" required>
+                            <button type="submit" class="btn-save">Update Email</button>
+                        </form>
+                    </div>
+                </div>
+
             </div>
+
+            <!-- Right Column: Secondary Actions & Danger Zone -->
+            <div class="grid-column">
+
+                <!-- Session Control -->
+                <div class="session-card">
+                    <div class="session-card-header">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <h3>Session Management</h3>
+                    </div>
+                    <p>Finished for now? You can safely terminate your current session anytime.</p>
+                    <a th:href="@{/logout}" class="btn-logout-settings" onclick="return confirm('Are you sure you want to log out?')">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout of Balik Gamit
+                    </a>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="settings-card danger-card">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-header-text">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <div>
+                                <span class="accordion-title">Delete Account</span>
+                                <span class="accordion-subtitle">Permanently delete your user profile</span>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div id="del-step-1">
+                            <input type="email" id="del-email-check" placeholder="Registered Email Address" required>
+                            <input type="password" id="del-pw-check" placeholder="Current Password" required>
+                            <button class="btn-verify" id="del-btn" style="background: var(--lost-red);" onclick="requestSecureOtp('DELETE_ACCOUNT', 'del-email-check', 'del-pw-check', 'del-btn', 'del-step-1', 'del-step-3')">
+                                <span class="spinner"></span> Request Deletion OTP
+                            </button>
+                        </div>
+                        
+                        <form th:action="@{/settings/verify-and-update}" method="post" id="del-step-3" class="step-2" onsubmit="return confirmFinalDelete()">
+                            <input type="text" name="userOtp" placeholder="6-Digit OTP" required maxlength="6">
+                            <button type="submit" class="btn-delete-final">Permanently Delete Account</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
     </main>
 
     <script>
-        // --- ACCORDION LOGIC ---
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
         function toggleAccordion(header) {
             const card = header.parentElement;
             const content = card.querySelector('.accordion-content');
-            
-            // Toggle active class
             card.classList.toggle('active');
-            
-            // Adjust max-height dynamically for smooth animation
             if (card.classList.contains('active')) {
                 content.style.maxHeight = content.scrollHeight + "px";
             } else {
@@ -460,16 +540,13 @@
             }
         }
 
-        // --- CENTRAL NOTIFICATION LOGIC ---
         function showCentralNotif(title, message, iconClass = 'fa-paper-plane') {
             const overlay = document.getElementById('central-notif-overlay');
             const modal = document.getElementById('central-modal');
             const icon = modal.querySelector('.modal-icon-container i');
-            
             document.getElementById('notif-title').innerText = title;
             document.getElementById('notif-message').innerText = message;
             icon.className = `fa-solid ${iconClass}`;
-
             overlay.style.display = 'flex';
             setTimeout(() => { modal.classList.add('active'); }, 10);
         }
@@ -479,23 +556,22 @@
             modal.classList.remove('active');
             setTimeout(() => {
                 document.getElementById('central-notif-overlay').style.display = 'none';
-            }, 400);
+            }, 200);
         }
 
-        // --- DARK MODE LOGIC ---
         const themeToggle = document.getElementById('theme-toggle');
         const currentTheme = localStorage.getItem('theme');
-        if (currentTheme) {
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            if (currentTheme === 'dark') themeToggle.checked = true;
+        if (currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.checked = true;
         }
+
         themeToggle.addEventListener('change', function() {
             const theme = this.checked ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
         });
 
-        // --- UNIFIED SECURE OTP LOGIC ---
         function requestSecureOtp(action, emailId, passId, btnId, currentStepId, nextStepId) {
             const emailVal = document.getElementById(emailId).value;
             const passVal = document.getElementById(passId).value;
@@ -523,8 +599,6 @@
                     showCentralNotif('Code Sent!', data, 'fa-envelope-circle-check');
                     document.getElementById(currentStepId).style.display = 'none';
                     document.getElementById(nextStepId).style.display = 'block';
-                    
-                    // Recalculate accordion height because content changed
                     const content = btn.closest('.accordion-content');
                     content.style.maxHeight = content.scrollHeight + "px";
                 } else {
@@ -541,7 +615,7 @@
 
         function checkMatch(input, targetId) {
             const original = document.getElementById(targetId).value;
-            input.style.borderColor = (input.value !== original) ? '#ff7675' : '#27ae60';
+            input.style.borderColor = (input.value !== original) ? 'var(--lost-red)' : 'var(--found-green)';
         }
 
         function confirmFinalDelete() {

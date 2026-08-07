@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- These tags are what Facebook "reads" when you share a link -->
     <meta property="og:type" content="website" />
     <meta property="og:url" th:content="'https://balik-gamit-production.up.railway.app/item/' + ${item.id}" />
     <meta property="og:title" th:content="'[LOST/FOUND] ' + ${item.name}" />
@@ -14,30 +13,176 @@
     <meta property="og:image:height" content="630" />
 
     <title th:text="${item.name}">Item Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Link your CSS so it looks like your dashboard -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        :root {
+            --bg-main: #f4f0fb;
+            --surface: #ffffff;
+            --text-main: #1e1b2e;
+            --text-sub: #64748b;
+            --card-border: rgba(147, 51, 234, 0.15);
+            --primary-accent: #9333ea;
+            --primary-hover: #7e22ce;
+            --found-green: #059669;
+            --lost-red: #dc2626;
+            --gradient-glow: linear-gradient(135deg, rgba(147, 51, 234, 0.05) 0%, rgba(217, 70, 239, 0.02) 100%);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 12px;
+            color: var(--text-main);
+            margin: 0;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(147, 51, 234, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(217, 70, 239, 0.05) 0%, transparent 40%);
+        }
+
+        .detail-card {
+            background: var(--surface);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(147, 51, 234, 0.08);
+            border: 1px solid var(--card-border);
+            max-width: 500px;
+            width: 100%;
+            background-image: var(--gradient-glow);
+        }
+
+        .image-container {
+            position: relative;
+            height: 260px;
+            background: #e2e8f0;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-badge.lost { background: var(--lost-red) !important; color: white !important; }
+        .status-badge.found { background: var(--found-green) !important; color: white !important; }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .category-tag {
+            font-size: 0.8rem;
+            color: var(--primary-accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h2 {
+            margin: 6px 0 12px 0;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .item-description {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-bottom: 20px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .contact-box {
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #faf8fd;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            word-break: break-all;
+        }
+
+        .meta-info {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin-bottom: 20px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #9333ea, #a855f7);
+            color: #ffffff;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: opacity 0.2s;
+            box-sizing: border-box;
+        }
+
+        .btn-back:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 480px) {
+            .image-container {
+                height: 200px;
+            }
+            .card-content {
+                padding: 18px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow">
-                    <img th:src="${item.imagePath}" class="card-img-top" alt="Item Image">
-                    <div class="card-body">
-                        <h2 class="card-title" th:text="${item.name}"></h2>
-                        <span class="badge bg-primary mb-2" th:text="${item.status}"></span>
-                        <p class="card-text" th:text="${item.description}"></p>
-                        <hr>
-                        <p><strong>Contact:</strong> <span th:text="${item.contactInfo}"></span></p>
-                        <p class="text-muted small">
-                            Posted by <span th:text="${item.poster.name}"></span> 
-                            on <span th:text="${item.getFormattedDate()}"></span>
-                        </p>
-                        <a href="/" class="btn btn-secondary w-100">Back to Dashboard</a>
-                    </div>
-                </div>
+<body>
+    <div class="detail-card">
+        <div class="image-container">
+            <span th:class="${item.status == 'LOST' or item.status == 'MISSING' ? 'status-badge lost' : 'status-badge found'}" 
+                  th:text="${item.status}">Status</span>
+            <img th:src="${item.imagePath != null ? item.imagePath : '/images/default.jpg'}" alt="Item Image">
+        </div>
+        <div class="card-content">
+            <span class="category-tag" th:text="${item.category}">Category</span>
+            <h2 th:text="${item.name}">Item Name</h2>
+            <p class="item-description" th:text="${item.description}">Description</p>
+            
+            <div class="contact-box">
+                <strong><i class="fa-solid fa-link"></i> Contact Info:</strong><br>
+                <span th:text="${item.contactInfo}"></span>
             </div>
+
+            <div class="meta-info">
+                <i class="fa-solid fa-user"></i> Posted by: <strong th:text="${item.poster != null ? item.poster.name : 'Anonymous'}">User</strong><br>
+                <i class="fa-solid fa-clock"></i> <span th:text="${item.getFormattedDate()}">Time</span>
+            </div>
+
+            <a href="/" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
         </div>
     </div>
 </body>
