@@ -67,8 +67,8 @@ public class ItemController {
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
         if (studentRepository.count() == 0) {
-            studentRepository.save(new Student("2023-0001", "password123", "Test Student", "test@student.edu", false));
-            studentRepository.save(new Student("ADMIN-01", "09062063128", "System Admin", "ssob.jeff13@gmail.com", true));
+            studentRepository.save(new Student("2023-0001", "09062063128@Jeff", "Test Student", "test@student.edu", false));
+            studentRepository.save(new Student("ADMIN-01", "09062063128@Jeff", "System Admin", "ssob.jeff13@gmail.com", true));
         }
 
         if (developerList.isEmpty()) {
